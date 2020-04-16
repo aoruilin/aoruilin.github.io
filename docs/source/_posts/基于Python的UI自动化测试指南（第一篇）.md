@@ -12,3 +12,5 @@ tags:
 a = 1
 print(a)
 ```
+
+![45f222922e0515aae08a35c49fdcbb9d.jpg](https://i.loli.net/2020/04/16/4YKizuDNTgQZJE2.jpg)

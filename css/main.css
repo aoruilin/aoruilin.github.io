@@ -13,7 +13,7 @@ body a {
   color: #3c4858;
 }
 body a:hover {
-  color: #1abc9c;
+  color: #FB8E58;
 }
 img[srcset] {
   object-fit: cover;
@@ -158,25 +158,25 @@ post-content strong {
 .navbar {
   background-color: transparent;
   font-size: 0.875rem;
-  color: white;
+  color: #FFFFFF;
 }
 .navbar a {
-  color: white;
+  color: #FFFFFF;
 }
 .navbar a:hover {
   background-color: rgba(0,0,0,0.1);
 }
 .navbar-custom {
-  color: white;
+  color: #FFFFFF;
 }
 .navbar-custom a {
-  color: white;
+  color: #FFFFFF;
 }
 .top-nav-collapse {
-  background-color: #2f4154;
+  background-color: #54546c;
 }
 .navbar-col-show {
-  background-color: #2f4154;
+  background-color: #54546c;
 }
 @media (max-width: 767px) {
   .navbar {
@@ -669,7 +669,7 @@ h6::before {
 }
 .tocbot-active-link {
   font-weight: 600;
-  color: #1abc9c;
+  color: #FB8E58;
 }
 .tocbot-is-collapsible {
   max-height: 1000px;
@@ -861,7 +861,7 @@ h6::before {
   font-weight: 400;
 }
 .tagcloud a:hover {
-  color: #1abc9c !important;
+  color: #FB8E58 !important;
 }
 .links .card {
   box-shadow: none;

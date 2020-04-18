@@ -295,7 +295,7 @@ livere:
 # Archive Page
 #---------------------------
 archive:
-  banner_img: /img/default.png
+  banner_img: https://i.loli.net/2020/04/18/MBerq6275sZjw3x.png
   banner_img_height: 80  # available: 0 - 100
   subtitle:  # 打字机内容
 
@@ -304,7 +304,7 @@ archive:
 # Categories Page
 #---------------------------
 category:
-  banner_img: /img/default.png
+  banner_img: https://i.loli.net/2020/04/18/MBerq6275sZjw3x.png
   banner_img_height: 80  # available: 0 - 100
   subtitle:  # 打字机内容
 
@@ -313,7 +313,7 @@ category:
 # Tags Page
 #---------------------------
 tag:
-  banner_img: /img/default.png
+  banner_img: https://i.loli.net/2020/04/18/MBerq6275sZjw3x.png
   banner_img_height: 80  # available: 0 - 100
   subtitle:  # 打字机内容
   tagcloud: # 标签云
@@ -329,7 +329,7 @@ tag:
 # About Page
 #---------------------------
 about:  # 以下仅为页面顶部的基本信息，更多内容请在 ./pages/about.md 中编辑，支持 markdown 和 HTML
-  banner_img: /img/default.png
+  banner_img: https://i.loli.net/2020/04/18/MBerq6275sZjw3x.png
   banner_img_height: 80  # available: 0 - 100
   subtitle:  # 打字机内容
   avatar: /img/avatar.png # 头像
@@ -346,7 +346,7 @@ about:  # 以下仅为页面顶部的基本信息，更多内容请在 ./pages/a
 # 404 Page
 #---------------------------
 page404:
-  banner_img: /img/default.png
+  banner_img: https://i.loli.net/2020/04/18/MBerq6275sZjw3x.png
   banner_img_height: 100  # available: 0 - 100
   subtitle: 'Page&Girlfriend not found'  # 打字机内容
 
@@ -356,7 +356,7 @@ page404:
 # Links Page
 #---------------------------
 links:
-  banner_img: /img/default.png
+  banner_img: https://i.loli.net/2020/04/18/MBerq6275sZjw3x.png
   banner_img_height: 80  # available: 0 - 100
   subtitle:  # 打字机内容
   items:  # 键是友链标题、值的列表内容分别是 [链接, 简介, 头像]，头像可以省略

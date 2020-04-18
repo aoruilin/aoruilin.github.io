@@ -37,16 +37,16 @@ fun_features: # 一些好玩的功能
     visible: hover # 默认悬浮显示，可选：hover（鼠标在元素上悬浮时显示） | always（一直显示） | touch（移动端触摸显示）
     icon: "" # 可选：§ | # | ❡ 等，留空则为默认效果
   mouse_click:  # 鼠标点击动效
-    enable: false
-    style: values # 目前设置两个值：values（价值观词汇） | love（爱心）
+    enable: true
+    style: love # 目前设置两个值：values（价值观词汇） | love（爱心）
 
 color:  # 主体颜色配置，可以从这里寻找启发： https://www.webdesignrankings.com/resources/lolcolors/
   body_bg_color: "#eee"
-  navbar_bg_color: "#2f4154"
-  navbar_text_color: "white"
+  navbar_bg_color: "#54546c"
+  navbar_text_color: "#FFFFFF"
   text_color: "#3c4858"
   link_color: "#3c4858"
-  link_hover_color: "#1abc9c"
+  link_hover_color: "#FB8E58"
   board_color: "#fff"
 
 custom_js:   # 指定自定义 js 文件路径，路径是相对 source 目录，如 /js/custom.js
@@ -90,14 +90,14 @@ aplayer:  # 音乐播放器，注意不能与 hexo-tag-aplayer 插件共用
 # Header
 #---------------------------
 navbar:
-  blog_title:  # 导航栏左侧的标题，为空则按 hexo config.title 显示
+  blog_title: A.R.L  # 导航栏左侧的标题，为空则按 hexo config.title 显示
   menu:  # 可自行增减，若想减去某个入口，可以将值留空，显示文本关联 languages
     home: /
     archive: /archives/
     category: /categories/
     tag: /tags/
     about: /about/
-    #links: /links/  # 友链页，把前面#去掉即可展示
+    links: /links/  # 友链页，把前面#去掉即可展示
 
 search: # 搜索栏
   enable: true
@@ -149,12 +149,12 @@ txc:
 # Index Page
 #---------------------------
 index:
-  banner_img: /img/default.png  # 首页 Banner 头图，以下相同
+  banner_img: https://i.loli.net/2020/04/18/MBerq6275sZjw3x.png  # 首页 Banner 头图，以下相同
   banner_img_height: 100  # 头图高度，屏幕百分比，available: 0 - 100
-  post_default_img: '' # 默认的文章封面图，当没有指定 index_img 时会使用该图片，若都为空则不显示任何图片
+  post_default_img: https://i.loli.net/2020/04/18/C1mHhn5SoXWELlV.jpg # 默认的文章封面图，当没有指定 index_img 时会使用该图片，若都为空则不显示任何图片
   slogan:  # 首页副标题的独立设置
     enable: true  # 为 false 则不显示任何内容
-    text:  # 为空则按 hexo config.subtitle 显示
+    text:  Link Start
   auto_excerpt:
     enable: true
   post_url_target: _self  # available: _blank | _self
@@ -174,7 +174,7 @@ page:
 # Post Page
 #---------------------------
 post:
-  banner_img: /img/default.png
+  banner_img: https://i.loli.net/2020/04/18/1EVi2TNDR7A5fxm.jpg
   banner_img_height: 70  # available: 0 - 100
   meta:  # 文章标题下方的信息
     date:  # 文章日期
@@ -204,8 +204,8 @@ post:
     enable: false
     content: '<img src="https://octodex.github.com/images/jetpacktocat.png" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">' # 自定义区域，支持 HTML，可自行插入赞赏码、公众号二维码等内容
   comments:  # 评论
-    enable: false  # 开启评论
-    type: disqus  # 指定使用的评论模块  available: disqus | valine | gitalk | utterances | changyan | livere  推荐 utterances
+    enable: true  # 开启评论
+    type: utterances  # 指定使用的评论模块  available: disqus | valine | gitalk | utterances | changyan | livere  推荐 utterances
   image_zoom:  # 文章图片可点击放大
     enable: true
   math:  # 数学公式，开启之前需要更换 Markdown 渲染器，否则复杂公式会有兼容问题，具体请见 https://hexo.fluid-dev.com/docs/guide/#数学公式
@@ -223,10 +223,10 @@ post:
 # utterances
 # You can install utterances with https://utteranc.es/ and generate your configuration
 utterances:
-  repo:
-  issue_term:
-  label: utterances
-  theme: github-light
+  repo: LitStronger/commit-utterances
+  issue_term: pathname
+  label: #
+  theme: github-dark-orange
   crossorigin: anonymous
 
 # Disqus
@@ -333,8 +333,8 @@ about:  # 以下仅为页面顶部的基本信息，更多内容请在 ./pages/a
   banner_img_height: 80  # available: 0 - 100
   subtitle:  # 打字机内容
   avatar: /img/avatar.png # 头像
-  name: myname
-  introduce: info / info / info # 支持 HTML
+  name: aoruilin
+  introduce: 蕾姆的老公 # 支持 HTML
   icons: # 更多图标可从 https://fontawesome.com/v5.10.0/icons?d=gallery 查找，并以 "图标名: url" 的格式添加在下方
     "fab fa-github": https://github.com
     "fab fa-twitter": https://twitter.com
@@ -348,7 +348,7 @@ about:  # 以下仅为页面顶部的基本信息，更多内容请在 ./pages/a
 page404:
   banner_img: /img/default.png
   banner_img_height: 100  # available: 0 - 100
-  subtitle: 'Page not found'  # 打字机内容
+  subtitle: 'Page&Girlfriend not found'  # 打字机内容
 
 
 #---------------------------

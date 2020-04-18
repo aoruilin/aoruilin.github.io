@@ -3,11 +3,11 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
-subtitle: ''
-description: ''
-keywords:
-author: John Doe
+title: A.R.L
+subtitle: 'Link Start'
+description: '一些记录'
+keywords: python,python3
+author: AoRuilin
 language: zh-CN
 timezone: ''
 
@@ -104,3 +104,9 @@ deploy:
   type: git
   repo: git@github.com:aoruilin/aoruilin.github.io.git
   branch: master
+
+# 永久链接
+
+addlink:
+  before_text: <b>本文地址： # text before the post link
+  after_text:  </b> # text after the post link

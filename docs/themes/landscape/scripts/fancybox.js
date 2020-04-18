@@ -4,7 +4,7 @@ var rUrl = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:ww
 * Fancybox tag
 *
 * Syntax:
-*   {% fancybox /path/to/image [/path/to/thumbnail] [title] %}
+*   {% fancybox /path/to/img [/path/to/thumbnail] [title] %}
 */
 
 hexo.extend.tag.register('fancybox', function(args){

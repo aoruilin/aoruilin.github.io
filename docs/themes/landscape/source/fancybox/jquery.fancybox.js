@@ -138,7 +138,7 @@
 			// HTML templates
 			tpl: {
 				wrap     : '<div class="fancybox-wrap" tabIndex="-1"><div class="fancybox-skin"><div class="fancybox-outer"><div class="fancybox-inner"></div></div></div></div>',
-				image    : '<img class="fancybox-image" src="{href}" alt="" />',
+				image    : '<img class="fancybox-img" src="{href}" alt="" />',
 				iframe   : '<iframe id="fancybox-frame{rnd}" name="fancybox-frame{rnd}" class="fancybox-iframe" frameborder="0" vspace="0" hspace="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen' + (IE ? ' allowtransparency="true"' : '') + '></iframe>',
 				error    : '<p class="fancybox-error">The requested content cannot be loaded.<br/>Please try again later.</p>',
 				closeBtn : '<a title="Close" class="fancybox-item fancybox-close" href="javascript:;"></a>',
@@ -241,7 +241,7 @@
 				group = isQuery(group) ? $(group).get() : [group];
 			}
 
-			// Recheck if the type of each element is `object` and set content type (image, ajax, etc)
+			// Recheck if the type of each element is `object` and set content type (img, ajax, etc)
 			$.each(group, function(i, element) {
 				var obj = {},
 					href,
@@ -359,7 +359,7 @@
 			return F._start(F.opts.index);
 		},
 
-		// Cancel image loading or abort ajax request
+		// Cancel img loading or abort ajax request
 		cancel: function () {
 			var coming = F.coming;
 
@@ -940,7 +940,7 @@
 		},
 
 		_loadImage: function () {
-			// Reset preload image so it is later possible to check "complete" property
+			// Reset preload img so it is later possible to check "complete" property
 			var img = F.imgPreload = new Image();
 
 			img.onload = function () {

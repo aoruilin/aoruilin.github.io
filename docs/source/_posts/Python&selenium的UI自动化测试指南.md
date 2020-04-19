@@ -3,8 +3,11 @@ title: 基于Python+selenium的UI自动化测试指南
 abbrlink: 973aa772
 date: 2020-04-16 22:47:29
 tags: 
-    - python
+    - Python
     - selenium
+category:
+  - Python
+  - 自动化测试
 comments: true
 ---
 

@@ -105,6 +105,8 @@ deploy:
   repo: git@github.com:aoruilin/aoruilin.github.io.git
   branch: master
 
+all_minifier: true
+
 live2d:
   enable: true
   # enable: false

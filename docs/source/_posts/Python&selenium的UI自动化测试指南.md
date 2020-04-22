@@ -63,29 +63,31 @@ comments: true
 ---
 
 
- 
+## selenium
 
-### 1.selenium
- - *selenium简介*
+
+selenium简介
  <details>
    <summary>selenium是...</summary>
 
- > Selenium是一个涵盖了一系列工具和库的总体项目，这些工具和库支持Web浏览器的自动化。它提供了扩展，以模拟用户与浏览器的交互，用于扩展浏览器分配的分发服务器，以及用于实现W3C WebDriver规范的实现的基础结构 ，使你可以为所有主要的Web浏览器编写可互换的代码。Selenium的核心是WebDriver，它是编写可以在许多浏览器中互换运行的指令集的接口。
+ > selenium是一个涵盖了一系列工具和库的总体项目，这些工具和库支持Web浏览器的自动化。它提供了扩展，以模拟用户与浏览器的交互，用于扩展浏览器分配的分发服务器，以及用于实现W3C WebDriver规范的基础结构 ，使你可以为所有主要的Web浏览器编写可互换的代码。Selenium的核心是WebDriver，它是编写可以在许多浏览器中互换运行的指令集的接口。
  </details>
    
- - 安装`selenium`
+#### 安装`selenium`
   ```bash
   pip install selenium
   ```
 
- - selenium的`webdriver`
+ > selenium支持多个浏览器，支持分布式运行且支持多种语言开发，能完成网页上的大部分操作，但是一些非网页操作比如文件上传操作，打开一个Windows资源管理器窗口选择上传的文件，这种操作是selenium无法完成的。
+
+#### selenium的`webdriver`
  
   webdriver是selenium的核心，我们主要通过调用它的API来实现在浏览器的各种操作，打开selenium目录就会看到如下：
 ```
  ├─common
  ├─webdriver
 ```
- common中主要包含了各个Exception类，主要用法我们之后介绍。我们再看一看webdriver的目录：
+ common中主要包含了各个`Exception`类，主要用法我们之后介绍。我们再看一看webdriver的目录：
 ```
 ├─android
 ├─blackberry
@@ -102,5 +104,26 @@ comments: true
 ├─webkitgtk
 ```
  从这里我们就可以看出我们可以使用哪些浏览器来做自动化测试了，在本文中会主要使用`chrome`来完成。
+ 
+ 
+ ## My First Script
+ 
+ 
+ *我们已经完成了所有的准备工作，接下来我们就开始写代码吧~*
+ 
+ ```python
+import time
+
+from selenium import webdriver
+
+driver = webdriver.Chrome()  # 实例化一个driver对象，打开Chrome浏览器
+driver.get('https://www.baidu.com')  # 访问百度
+driver.find_element_by_id('kw').send_keys('python')
+time.sleep(1)
+driver.find_element_by_id('su').click()
+time.sleep(3)
+driver.close()  # 关闭浏览器，释放资源
+
+```
 
 

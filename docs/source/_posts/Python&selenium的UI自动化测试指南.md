@@ -65,6 +65,8 @@ comments: true
 
 ## selenium
 
+> *在开始写代码之前不要忘了还需要在**Python环境**中安装`selenium`，我们之后在网页上的所有操作都会通过它来实现。*
+
 
 selenium简介
  <details>
@@ -109,21 +111,76 @@ selenium简介
  ## My First Script
  
  
- *我们已经完成了所有的准备工作，接下来我们就开始写代码吧~*
- 
- ```python
-import time
+> *我们已经完成了所有的准备工作，接下来我们就开始写代码吧~*
 
+**先来看一个demo**
+ ```python
 from selenium import webdriver
 
 driver = webdriver.Chrome()  # 实例化一个driver对象，打开Chrome浏览器
 driver.get('https://www.baidu.com')  # 访问百度
-driver.find_element_by_id('kw').send_keys('python')
-time.sleep(1)
-driver.find_element_by_id('su').click()
-time.sleep(3)
+driver.find_element_by_id('kw').send_keys('python')  # 在搜索输入框输入
+driver.find_element_by_id('su').click()  # 点击搜索
 driver.close()  # 关闭浏览器，释放资源
 
 ```
+我们先不看代码的部分，直接运行这个demo我们可以看到整个的操作和代码中的**注释**中描述的一样，如果你觉得操作的太快看不清楚的话可以在各个操作中间加上**等待**，就像这样：
 
+> 等待的操作在自动化测试中是很必要的，selenium的等待方式有3种，这里我们先介绍强制等待
+
+```python
+import time
+
+from selenium import webdriver
+
+driver = webdriver.Chrome()
+driver.get('https://www.baidu.com')
+time.sleep(2)  # 强制等待2秒
+driver.find_element_by_id('kw').send_keys('python')
+```
+在你想要停顿的地方插入等待的代码后再次运行demo就会看到你想要的效果了。
+
+**那么，这些操作到底是怎么做到的呢？** 
+- 同样是出租车的例子，我们作为乘客下达指令，司机开车到达目的地。这里我们需要思考一下我们要通过什么告诉司机我们要去的具体位置呢？
+
+**下面我们需要了解的就是selenium识别网页页面元素的方法了！**
+
+
+### 页面元素定位的方法
+
+ > selenium的识别原理是通过元素的一个唯一的属性和属性值去HTML页面中定位和识别元素，我们可以通过标签的id、name、class属性或者标签的名称等方法定位到我们想定位的元素位置，然后传入webdriver的方法中取做各种操作。
+
+#### selenium的元素定位方法有以下几种：
+
+    find_element_by_id() 通过id属性
+    find_element_by_name() 通过name属性
+    find_element_by_tag_name() 通过标签名称
+    find_element_by_class_name() 通过属性的值
+    find_element_by_link_text() 通过超链接文本
+    find_element_by_partial_link_text() 通过超链接文本
+    find_element_by_xpath() 通过xpath表达式
+    find_element_by_css_selector() 通过css表达式
+    
+ 这些方法传入的
+
+
+ - **第一步**
+  在浏览器中打开**开发者工具**（以下操作都使用chrome实现，就是F12），在左上角有鼠标样式的图标，点它之后再去页面中点击你想定位的元素，如下图：
+  
+  ![baidu_dingwei.png](https://i.loli.net/2020/04/25/3R6PfYQZp5bKBi9.png)
+  
+  这里能看到输入框的input标签中，id、name、class属性都有，这里我们需要判断这些属性是否是**唯一**的，非常简单，将标签中的属性双击后复制出来用`Ctrl + F`搜索一下就能看到了，就像下图一样：
+  
+  ![baidu_ysdingwei.png](https://i.loli.net/2020/04/25/pckYugHG7n1LN35.png)
+  
+  > 这里搜索结果需要注意的是如果搜索结果在全局样式的代码中的话，我们可以忽略这个结果，只查看页面标签中的搜索结果是不是唯一的。
+
+  这里的`kw`是这个input标签的`id`，我们再回顾一下之前demo中的代码：
+  ```python
+driver.find_element_by_id('kw').send_keys('python')
+```
+  
+  我们在实例化webdriver的对象后，通过调用它的`find_element_by_id()`方法并传入input标签的id属性`kw`，然后使用`send_keys()`方法输入我们想输入的内容，这样就完成了一次输入操作了。
+
+除了`find_element_by_id()`，还有其他的
 

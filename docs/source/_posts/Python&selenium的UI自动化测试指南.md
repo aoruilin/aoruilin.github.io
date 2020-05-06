@@ -150,7 +150,7 @@ driver.find_element_by_id('kw').send_keys('python')
 
  > selenium的识别原理是通过元素的一个唯一的属性和属性值去HTML页面中定位和识别元素，我们可以通过标签的id、name、class属性或者标签的名称等方法定位到我们想定位的元素位置，然后传入webdriver的方法中取做各种操作。
 
-#### selenium的元素定位方法有以下几种：
+**selenium的元素定位方法有以下几种：**
 
     find_element_by_id() 通过id属性
     find_element_by_name() 通过name属性
@@ -161,26 +161,229 @@ driver.find_element_by_id('kw').send_keys('python')
     find_element_by_xpath() 通过xpath表达式
     find_element_by_css_selector() 通过css表达式
     
- 这些方法传入的
-
+   这些方法都会返回一个元素`element`对象，我们可以使用`send_keys()`或`click()`等方法对这个对象进行想要的操作。
+    
+ 这些方法需要的**参数**怎么确定呢？
+ 
 
  - **第一步**
   在浏览器中打开**开发者工具**（以下操作都使用chrome实现，就是F12），在左上角有鼠标样式的图标，点它之后再去页面中点击你想定位的元素，如下图：
   
   ![baidu_dingwei.png](https://i.loli.net/2020/04/25/3R6PfYQZp5bKBi9.png)
-  
+ 
+ - **第二步**
   这里能看到输入框的input标签中，id、name、class属性都有，这里我们需要判断这些属性是否是**唯一**的，非常简单，将标签中的属性双击后复制出来用`Ctrl + F`搜索一下就能看到了，就像下图一样：
   
   ![baidu_ysdingwei.png](https://i.loli.net/2020/04/25/pckYugHG7n1LN35.png)
   
-  > 这里搜索结果需要注意的是如果搜索结果在全局样式的代码中的话，我们可以忽略这个结果，只查看页面标签中的搜索结果是不是唯一的。
+  > 这里搜索结果需要注意的是如果搜索结果在全局样式的代码中的话，我们可以忽略这个结果，只查看页面标签中的搜索结果是不是唯一的。**tip：**form标签下的子标签的id都是唯一的，可以直接用哦~
 
-  这里的`kw`是这个input标签的`id`，我们再回顾一下之前demo中的代码：
+
+这里的`kw`是这个input标签的`id`，我们已经知道了我们想要传入的参数是`id`，所以我们需要使用对应的方法来完成定位，我们再回顾一下之前demo中的代码：
   ```python
 driver.find_element_by_id('kw').send_keys('python')
 ```
   
   我们在实例化webdriver的对象后，通过调用它的`find_element_by_id()`方法并传入input标签的id属性`kw`，然后使用`send_keys()`方法输入我们想输入的内容，这样就完成了一次输入操作了。
+  
 
-除了`find_element_by_id()`，还有其他的
+ > *其他的定位方法比如`name`和`class_name`的查找也是一样，找到定位参数传入相应的定位方法中即可，其他定位方法要详细介绍的话都可以单独写一篇了（后面应该会写一篇xpath的），如果之前没有了解的话可以自行百度&Google一下**xpath**和**css_selector**，这里不过多介绍。*
 
+
+
+如果需要一次定位到**多个元素**，也有对应的方法：
+
+    find_elements_by_id() 通过id属性
+    find_elements_by_name() 通过name属性
+    find_elements_by_tag_name() 通过标签名称
+    find_elements_by_class_name() 通过属性的值
+    find_elements_by_link_text() 通过超链接文本
+    find_elements_by_partial_link_text() 通过超链接文本
+    find_elements_by_xpath() 通过xpath表达式
+    find_elements_by_css_selector() 通过css表达式
+
+这些方法在定位到这些元素后，会将这些元素装入列表并返回，我们也可以对这个列表中的元素进行操作：
+
+```python
+import time
+
+from selenium import webdriver
+
+
+driver = webdriver.Chrome()
+driver.get('https://www.baidu.com')
+driver.find_element_by_id('kw').send_keys('日历')  # 搜索日历
+driver.find_element_by_id('su').click()
+time.sleep(3)  # 根据你的网页加载时间可以增加或减少等待的时间
+date_elements_list = driver.find_elements_by_xpath('//table[@class="op-calendar-pc-table"]'
+                                                   '/descendant::tr[4]/descendant::a')  # 定位日历的第三排中的所有日期元素
+for date_element in date_elements_list:
+    date_element.click()  # 遍历日期元素列表，对每个元素进行点击
+    time.sleep(0.2)  # 加一个短暂等待以便看出运行效果
+driver.close()
+```
+
+运行这段代码看看效果吧~
+
+
+### 设置等待和等待时间
+
+ > 在demo运行时，我们可以看到点击、输入这些操作的速度非常快，既然这么快，为什么要设置等待时间呢？
+ > 可以设定一个场景，如果性能不稳定或者运行环境的网络速度不稳定使页面加载变得很慢，会遇到一种情况就是我们的代码已经运行了，但是页面还没加载出来，最终的结果就是报错后退出运行，这样使得我们的脚本非常不稳定，怎么解决呢？
+ > 这时候设置**等待**就派上用场了~
+
+**我们常用的等待方式有三种，一种是之前介绍的强制等待，另外两种是selenium的等待方法：**
+
+
+ - **隐式等待**
+ 
+   > 设置一个粘性超时，以隐式地等待找到一个元素或完成一个命令。
+ 
+```python
+driver.implicitly_wait(time_to_wait)
+```
+
+   加入这行代码后，在运行时会按照传入的`time_to_wait`参数的值对应的秒数等待页面所有的元素加载完成，我们将它带入之前的demo中看看效果吧
+
+   ```python
+from selenium import webdriver
+    
+driver = webdriver.Chrome()  # 实例化一个driver对象，打开Chrome浏览器
+driver.implicitly_wait(5)  # 隐式等待5秒
+driver.get('https://www.baidu.com')  # 访问百度
+driver.find_element_by_id('kws').send_keys('python')  # 这里将id改成了错误的以便看出效果
+   ```
+
+ > *注意隐式等待只需要设置一次，它会在整个周期中都起作用*
+
+   运行这段代码后可以看到，在打开网站后等待了5秒，最后抛出一个异常后停止运行，如果没有这行代码，在打开网站后就会马上抛出异常，假设我们的定位是正确的，但我们要找的元素不会再页面加载完后马上出现，这种情况就需要隐式等待了。
+   
+   *这里如果换成另外一种情况，我们想要的元素已经加载完成了，但是有个别元素还没有完成加载，设置了隐式等待后我们仍需要等待页面全部加载完成才执行下一步，这样就不是很灵活，所以接下来我们来介绍一下显示等待。*
+
+ - **显示等待**
+ 
+ > 传入driver对象，设置等待时长和检查间隔，可以灵活地对特定的元素进行等待。
+
+```python
+from selenium.webdriver.support.wait import WebDriverWait
+
+WebDriverWait(driver=driver, timeout=12, poll_frequency=0.6).until(method, message='')
+WebDriverWait(driver=driver, timeout=12, poll_frequency=0.6).until_not(method, message='')
+```
+
+`driver`和`timeout`是必要参数，driver即我们实例化的webdriver对象，timeout即设置的等待时间，超过设置的等待时间后抛出TimeoutException。这里用到的两种方法`until`和`until_not`，需要传入一个**method**方法作为参数，我们传入后会在设置的等待时间中循环调用这个method，until会在传入的method返回值不为False时停止循环并返回，until_not会在返回值为False时停止循环并返回。
+`poll_frequency`是调用的频率，这里设置为每0.6秒调用一次，不写该参数时默认0.5秒。
+另外还有一个参数为`ignored_exceptions`，即在调用时需要忽略的异常，默认为NoSuchElementException，通常我们不用写这个参数，默认即可。
+
+我们可以使用`expected_conditions`模块中的各个类传入until和until_not的method参数，就像这样：
+
+```python
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.wait import WebDriverWait
+
+driver = webdriver.Chrome()
+driver.implicitly_wait(5)
+driver.get('https://www.baidu.com')
+
+input_loc = By.ID, 'kw'  # 定位器
+input_element = WebDriverWait(driver, 15).until(ec.presence_of_element_located(input_loc))  # 等待搜索输入框加载完成，完成后返回输入框元素对象
+input_element.send_keys('python')
+
+driver.find_element_by_id('su').click()
+driver.close()
+```
+
+下面列举几个常用的expected_conditions模块提供的条件判断：
+
+ - `presence_of_element_located(locator)` -> 参数传入定位器，判断定位的元素是否在DOM中加载完成（可以使不可见的元素），定位到元素后返回该元素
+ 
+ - `visibility_of_element_located(locator)` -> 参数传入定位器，用于检查某个元素是否存在于页面的DOM上并且是可见的。可见性意味着不仅显示元素，而且元素的高度和宽度也大于0
+ 
+ - `visibility_of(element)` -> 传入已知的存在于DOM中的元素，检查这个元素是否可见，一旦是可见的就返回这个元素
+ 
+ - `visibility_of_any_elements_located(locator)` -> 参数传入定位器，检查web页面上至少有一个期望的元素是可见，定位到元素后返回这些元素的列表
+ 
+ - `invisibility_of_element(invisibility_of_element_located)` -> 参数传入希望不可见的定位器，用于检查某个元素是否在DOM上不可见或不存在的期望
+ 
+ - `title_is(title)` -> 参数传入预期的title字符串，检查页面标题是否符合预期，使用精确匹配，匹配返回True，若不匹配返回False
+ 
+ - `title_contains(title)` -> 参数传入预期的title字符串，检查页面标题是否包含预期，使用模糊匹配，匹配返回True，若不匹配返回False
+ 
+ - `url_contains(url)` -> 参数传入预期的url，检查当前url是否包含预期的url，使用模糊匹配，匹配返回True，若不匹配返回False
+ 
+ - `url_matches(url)` -> 参数传入预期的url，检查当前url是否符合预期的url，使用精确匹配，匹配返回True，若不匹配返回False
+
+
+需进一步了解所有预期条件判断可以查看`expected_conditions`的源码。
+
+
+## 测试框架
+
+ > 现在我们已经能通过调用selenium的webdriver中的API实现网页操作了，但我们的目的是通过这些操作来实现自动化测试，其中必不可少的就是测试框架了，常用的测试框架包括`unittest`、`pytest`、`doctest`等等，我们这里主要使用**unittest**来完成。
+
+### unittest创建用例
+
+ unittest是Python内置的标准库，通过继承`unittest.TestCase`来创建测试用例，使用时需要注意的是你的方法名称必须以**test**开头，没有以此开头的都不会被执行。更加具体的介绍可以参考[文档](https://docs.python.org/2/library/unittest.html)，这里我们直接开始撸代码吧~
+ 
+ 创建一个项目文件夹，在文件夹中创建名为`testcase.py`的文件，写入以下代码：
+ 
+ ```python
+import unittest  # 导入unittest
+
+from selenium import webdriver
+
+
+class MyTest(unittest.TestCase):  # 继承unittest.TestCase创建测试用例
+
+    def setUp(self) -> None:  # 测试用例运行前的设置
+        self.driver = webdriver.Chrome()
+        self.driver.implicitly_wait(8)
+        self.base_url = 'https://www.baidu.com'
+
+    def test_baidu(self):
+        self.driver.get(self.base_url)
+
+        title = self.driver.title
+        tc = unittest.TestCase()  # 实例化TestCase对象
+        tc.assertEqual('百度一下，你就知道', title, '标签页标题错误')  # 使用assertEquil方法断言标签名称
+
+    def tearDown(self) -> None:  # 释放资源
+        self.driver.close()
+
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+这段代码中的`setUp`和`tearDown`方法是unittest框架中的测试固件，setUp是定义一些有固定用途的方法，tearDown用于用例运行完后释放资源，中间以`test_`开头命名的方法就是测试用例，在运行时，它们会按照特定的顺序依次运行，先运行setUp，然后是test开头命名的测试用例*（测试用例可以有多个，默认以方法名首字母排序的顺序运行，当然你也可以在命名时在"test_"后面加上阿拉伯数字来规定你的用例运行顺序，只是这样的命名不是很优雅）*，最后运行tearDown，可以参考下图：
+![yunxing (2).png](https://i.loli.net/2020/05/05/DhMLxjQyYVafoqF.png)
+
+测试用例都会检查实际和期望结果是否一致，要实现这个操作就要用到代码中的`tc.assertEqual()`了，这个方法接收3个参数，前两个必要参数`first`和`second`写入预期和实际结果，如果`first != second`，则抛出`AssertionError`并中断运行，`msg`参数是抛出异常的描述，可不传。
+
+> 除了assertEqual，框架中还有很多其他的断言方法（具体参考**unittest.TestCase**源码），比如`assertNotEqual`，参数与assertEqual方法相同，区别是如果`first == second`，则抛出`AssertionError`并中断运行。
+
+现在我们已经能使用unittest创建测试用例了，那么创建的用例我们每次要一个个点运行来执行吗？
+当然不需要，我们要实现的是自动执行所有测试用例*PS:这样也只能算半自动化测试*，接下来介绍unittest中的用例集成。
+
+### unittest用例集成
+
+ 要将所有创建的用例集成起来一起运行，需要用到`unittest.suite`的`TestSuite`类，使用方法为创建一个**TestSuite实例**，然后添加测试用例实例。
+ 将所有测试用例添加到**TestSuite实例**中后，再实例一个**runner**对象，这个runner可以使用TextTestRunner(`unittest.TextTestRunner()`)创建，也可以使用`HTMLTestRunner`等第三方工具来创建并输出报告
+ 
+ 具体参考以下代码：
+ 
+ ```python
+# 可以单独创建一个.py文件写入以下代码
+
+from unittest.suite import TestSuite
+from testcase import MyTest
+```
+
+
+## POM设计思想
+
+ 之前我们介绍了测试框架unittest，并且使用这个框架创建并集成运行测试用例，
+ 
+ > POM,即Page Object Model，用中文就是页面对象模型，这是一种非常普遍的框架设计思想

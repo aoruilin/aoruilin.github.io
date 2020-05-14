@@ -327,7 +327,7 @@ driver.close()
 
  unittest是Python内置的标准库，通过继承`unittest.TestCase`来创建测试用例，使用时需要注意的是你的方法名称必须以**test**开头，没有以此开头的都不会被执行。更加具体的介绍可以参考[文档](https://docs.python.org/2/library/unittest.html)，这里我们直接开始撸代码吧~
  
- 创建一个项目文件夹，在文件夹中创建名为`testcase.py`的文件，写入以下代码：
+ 创建一个项目文件夹，在文件夹中创建名为`test_case.py`的文件，写入以下代码：
  
  ```python
 import unittest  # 导入unittest
@@ -372,18 +372,225 @@ if __name__ == '__main__':
  要将所有创建的用例集成起来一起运行，需要用到`unittest.suite`的`TestSuite`类，使用方法为创建一个**TestSuite实例**，然后添加测试用例实例。
  将所有测试用例添加到**TestSuite实例**中后，再实例一个**runner**对象，这个runner可以使用TextTestRunner(`unittest.TextTestRunner()`)创建，也可以使用`HTMLTestRunner`等第三方工具来创建并输出报告
  
- 具体参考以下代码：
+ 创建一个test_suits.py文件，写入以下代码：
  
  ```python
-# 可以单独创建一个.py文件写入以下代码
-
 from unittest.suite import TestSuite
-from testcase import MyTest
+from unittest import TextTestRunner
+
+from test_case import MyTest  # 导入测试用例
+
+suite = TestSuite()  # 实例化测试集suite对象
+
+# 可以创建多个用例并添加到测试集中
+# test_用例号 = 类名('方法名')
+test_01 = MyTest('test_baidu')  # 实例化测试用例对象
+
+suite.addTests([test_01])  # 将测试用例加载到测试集中
+
+runner = TextTestRunner()  # 实例化运行runner对象
+runner.run(suite)  # 使用runner运行测试集
+
 ```
+运行时会按照你定义的**用例编号**的顺序运行，在运行时会输出测试用例的名称，在发生错误时输出报错信息，并在测试运行结束时打印出结果。
+如果觉得这样的输出不够全面，可以使用第三方工具来输出报告，但这里不做介绍了，`HTMLTestRunner`和[`allure`](http://allure.qatools.ru/)都是不错的选择，用法也很简单，可以自行了解。
+
 
 
 ## POM设计思想
 
- 之前我们介绍了测试框架unittest，并且使用这个框架创建并集成运行测试用例，
+ > 之前我们介绍了测试框架unittest，并且使用这个框架创建并集成运行测试用例，以后所有的测试用例都会按照这个方法来开发和调试，但是如果每写一个用例都要从打开浏览器写到关闭浏览器的话，很多步骤就重复了，这也代表我们的代码也有**很多重复**的，这会导致代码维护成本越来越大，如果**前端UI变化**非常频繁的话，这样的代码维护起来简直就是噩梦。。。
+ 怎么解决呢？
+ 我们来看接下来介绍的一种框架设计思想-POM
  
- > POM,即Page Object Model，用中文就是页面对象模型，这是一种非常普遍的框架设计思想
+ 
+ **POM**,即**Page Object Model**，用中文就是页面对象模型，这是一种非常普遍的框架设计思想，POM是解决问题的一种思想，并不是框架，在这里我们主要用来解决前端UI变化频繁导致我们代码维护成本过大的问题。
+ 我们现在的测试用例把页面元素和页面操作代码和测试用例都写在了一起，使用POM后，区别就是把页面元素和页面操作代码从测试用例分离出来单独写成一个**PageObject类**文件，如果前端UI有变化，我们就只需要改**PageObject类**中的代码，不需要改测试用例。
+ 经过文章之前的操作，我们创建了一个test_case文件和一个test_suits文件，现在我们创建一个`page_object.py`文件，将页面元素和操作代码分离到这个文件中，代码如下：**(代码有点长，建议点代码区域右上角复制到你自己的编辑器中查看)**
+ 
+ ```python
+import time
+from unittest import TestCase
+
+from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+
+class ElementLocator:
+
+    input_loc = By.ID, 'kw'  # 输入框
+    search_btn_loc = By.ID, 'su'  # 搜索按钮
+    tab_inner_loc = By.CLASS_NAME, 's_tab_inner'  # 顶部tab
+    tab_inner_web_loc = By.XPATH, '//div[@class="s_tab_inner"]/b'  # 顶部网页tab
+
+
+class PageObject:
+    def __init__(self, driver):
+        self.driver = driver
+
+    def click_button(self, btn_loc, wait=True):
+        """
+        单独点击一个按钮
+
+        :param btn_loc: 按钮定位器
+        :param wait: 是否等待
+        :return: None
+        """
+        if wait:
+            time.sleep(0.5)
+            self.driver.find_element(*btn_loc).click()
+        else:
+            self.driver.find_element(*btn_loc).click()
+
+    def send_text(self, input_loc, text):
+        """
+        输入文本
+        :param input_loc: 输入框定位器
+        :param text: 输入文本内容
+        :return: None
+        """
+        self.driver.find_element(*input_loc).send_keys(text)
+
+    def webdriver_wait(self):
+
+        return WebDriverWait(self.driver, 15)
+
+    @staticmethod
+    def element_presence(element_loc):
+        """
+        判断页面中是否存在这个元素
+        :param element_loc: 元素定位，传入元组(by, locator)
+        :return:
+        """
+
+        return EC.presence_of_element_located(element_loc)
+
+    def assert_equal(self, text, text_loc):
+        """
+        断言文本相等
+
+        :param text: 期望文本
+        :param text_loc: 实际文本定位器
+        :return: None
+        """
+        try:
+            wait = self.webdriver_wait()
+            show_up = self.element_presence(text_loc)
+            wait.until(show_up)
+            actual_text = self.driver.find_element(*text_loc).text
+            print(f'期望： "{text}", 实际： "{actual_text}"')
+        except NoSuchElementException:
+            print(f'没有{text}')
+        except ElementNotVisibleException:
+            print(f'未找到{text}元素')
+        except Exception as e:
+            print(f'{e}， {text}断言异常，与期望不符')
+        else:
+            tc = TestCase()
+            tc.assertEqual(text, actual_text)
+
+    def assert_in(self, text, text_loc, reverse=False):
+        """
+        断言文本在页面中
+
+        :param text: 期望文本
+        :param text_loc: 实际文本定位器
+        :param reverse: True->取出文本all_text在text中，False->text在取出文本all_text中
+        :return: None
+        """
+        try:
+            wait = self.webdriver_wait()
+            show_up = self.element_presence(text_loc)
+            wait.until(show_up)
+            actual_text = self.driver.find_element(*text_loc).text
+            print(f'所有文本：{actual_text}')
+        except NoSuchElementException:
+            print(f'没有{text}')
+        except ElementNotVisibleException:
+            print(f'未找到{text}元素')
+        except Exception as e:
+            print(f'"{e}, {text}断言异常，不在页面中')
+        else:
+            tc = TestCase()
+            if reverse:
+                tc.assertIn(actual_text, text)
+            else:
+                tc.assertIn(text, actual_text)
+
+    def assert_text_in_page(self, text, text_loc):
+        """
+        断言文本在指定区域中
+
+        :param text: 期望文本
+        :param text_loc: 实际文本定位器
+        :return:
+        """
+        try:
+            element_list = self.driver.find_elements(*text_loc)
+            text_list = []
+            for s in element_list:
+                actual_text = s.text
+                text_list.append(actual_text)
+            all_text = ''.join(text_list)
+        except NoSuchElementException:
+            print(f'没有{text}')
+        except ElementNotVisibleException:
+            print(f'未找到{text}元素')
+        except Exception as e:
+            print(f'{e}, {text}断言异常，不在指定区域中')
+        else:
+            tc = TestCase()
+            tc.assertIn(text, all_text)
+
+    def baidu_search(self, search_content):
+        """
+        搜索操作
+        :param search_content:搜索内容
+        :return:
+        """
+        self.send_text(ElementLocator.input_loc, search_content)
+        self.click_button(ElementLocator.search_btn_loc, wait=True)
+
+```
+
+在这个文件中，一共有两个类，`ElementLocator`类中将所有的元素定位器写进去统一管理，前端UI变化后我们就可以直接在这个类中找到对应的元素修改就行了。`PageObject`类中封装了一些常用的方法，比如点击，输入，等待和断言，还有很多其他的方法比如刷新页面，切换窗口等等都可以封装在这里，这个类最后一个方法`baidu_search`就是页面操作了，这里每个方法中的操作颗粒度可以根据你的用例情况来决定要多细，在用例的类中，我们就通过调用这些方法来完成不同的操作步骤。
+
+让我们再来看看用例的类文件，在之前创建的`test_case.py`文件中，我们修改我们的代码如下：
+```python
+import unittest
+from selenium import webdriver
+
+from page_object import ElementLocator, PageObject  # 导入之前创建的两个类
+
+
+class MyTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.driver = webdriver.Chrome()
+        self.driver.implicitly_wait(8)
+        self.base_url = 'https://www.baidu.com'
+
+        self.page = PageObject(self.driver)  # 实例化页面操作对象
+        self.element = ElementLocator()  # 实例化元素定位器对象
+
+    def test_baidu(self):
+        self.driver.get(self.base_url)
+        self.page.baidu_search('selenium')  # 搜索selenium的操作
+        self.page.assert_in('网页', self.element.tab_inner_loc)  # 断言操作
+        self.page.assert_equal('网页', self.element.tab_inner_web_loc)  # 断言操作
+
+    def tearDown(self) -> None:
+        self.driver.close()
+
+
+if __name__ == '__main__':
+    unittest.main()
+
+```
+现在如果前端UI更改甚至需求更改的话，我们就只需要更改`page_object.py`中的两个类中的代码就行了，特别是将页面元素定位器统一管理后，可以有效的减少维护成本，再创建新的用例也能方便许多。
+
+
+## 代码结构与配置文件
+
+ > 时间不够了，后面继续写。。。。

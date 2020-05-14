@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png"><link rel="icon" type="image/png" href="/img/favicon.png"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no"><meta http-equiv="x-ua-compatible" content="ie=edge"><meta name="theme-color" content="#54546c"><meta name="description" content="一些记录"><meta name="author" content="AoRuilin"><meta name="keywords" content="python,python3"><title>基于Python+selenium的UI自动化测试指南 - A.R.L</title><link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/5.12.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/mdbootstrap/4.13.0/css/mdb.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/3.0.1/github-markdown.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1067060_qzomjdt8bmp.css"><link rel="stylesheet" href="/lib/prettify/tomorrow-night-eighties.min.css"><link rel="stylesheet" href="/css/main.css"><link defer rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css"><meta name="generator" content="Hexo 4.2.0"></head><body><header style="height:70vh"><nav id="navbar" class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar"><div class="container"><a class="navbar-brand" href="/">&nbsp;<strong>A.R.L</strong>&nbsp;</a> <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><div class="animated-icon"><span></span><span></span><span></span></div></button><div class="collapse navbar-collapse" id="navbarSupportedContent"><ul class="navbar-nav ml-auto text-center"><li class="nav-item"><a class="nav-link" href="/">首页</a></li><li class="nav-item"><a class="nav-link" href="/archives/">归档</a></li><li class="nav-item"><a class="nav-link" href="/categories/">分类</a></li><li class="nav-item"><a class="nav-link" href="/tags/">标签</a></li><li class="nav-item"><a class="nav-link" href="/about/">关于</a></li><li class="nav-item"><a class="nav-link" href="/links/">友链</a></li><li class="nav-item" id="search-btn"><a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i class="iconfont icon-search"></i>&nbsp;&nbsp;</a></li></ul></div></div></nav><div class="view intro-2" id="background" parallax="true" style="background:url(https://i.loli.net/2020/04/18/1EVi2TNDR7A5fxm.jpg) no-repeat center center;background-size:cover"><div class="full-bg-img"><div class="mask rgba-black-light flex-center"><div class="container text-center white-text fadeInUp"><span class="h2" id="subtitle"></span><p class="mt-3 post-meta"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 星期四, 四月 16日 2020, 10:47 晚上</p><p class="mt-1"><span class="post-meta"><i class="far fa-chart-bar"></i> 5k 字 </span><span class="post-meta"><i class="far fa-clock"></i> 18 分钟</span></p></div></div></div></div></header><main><div class="container-fluid"><div class="row"><div class="d-none d-lg-block col-lg-2"></div><div class="col-lg-8 nopadding-md"><div class="container nopadding-md" id="board-ctn"><div class="py-5 z-depth-3" id="board"><div class="post-content mx-auto" id="post"><div class="markdown-body"><h1 id="Python-amp-selenium自动化测试"><a href="#Python-amp-selenium自动化测试" class="headerlink" title="Python&amp;selenium自动化测试"></a>Python&amp;selenium自动化测试</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><em>本篇将介绍如何使用<code>Python</code>和<code>selenium</code>，从编写你的第一个测试脚本到创建一个web端的UI自动化测试项目。主要针对刚开始或准备接触自动化测试的人，我们假设你已经拥有了基本的Python技能并且有一些面向对象编程的经验，那么这篇文章应该会对你有所帮助。</em></p><hr><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><blockquote><p>在开始前，我们先来了解一下一条自动化脚本是如何运作的，如果预先了解过或者见过自动化脚本运行效果就会知道，其实就是通过我们编写的代码运行后使浏览器去执行我们制定的各种操作步骤。这个场景就和坐出租车一样，乘客告诉司机要去哪，司机按照乘客的要求开车把我们送到目的地，在这里我们就是乘客，现在我们需要的就是<strong>司机</strong>和<strong>车</strong>。</p></blockquote><h3 id="1-浏览器"><a href="#1-浏览器" class="headerlink" title="1.浏览器"></a>1.浏览器</h3><blockquote><p>浏览器就是我们需要的<strong>车</strong>，一个web端项目在开发、调试、测试的过程中主要使用的浏览器就是chrome和Firefox了，我们主要介绍一下这两个浏览器。</p></blockquote><ul><li><p><strong>chrome</strong><br>在写这篇文章时chrome稳定版已经更新到81的版本了，最新版本前两天刚踩了坑，所以推荐使用60-79范围中的版本，因为我们需要一个稳定的运行环境，而且我们做的是自动化测试，不需要考虑兼容性测试。<br>这里肯定有人会问，chrome有自动更新啊！解决方法有几种，但我不保证对你就有用（手动狗头）。</p><ul><li>a.打开C:\Program Files (x86)\Google，强行删除Update目录</li><li>b.安装的时候把网断掉</li></ul><p>以上的方法都能用一段时间，如果它还是自己更新了，emmmmm…删掉重新再装一次那个版本吧，所以最好把浏览器安装包统一管理起来，一是好找，二是如果要测兼容也可以派上用场。</p></li><li><p><strong>Firefox</strong><br>推荐使用55以后的版本，Firefox关闭自动更新就很简单了，只需要几步，在设置中找到高级，点到更新后选择不检查更新，搞定~</p></li></ul><h3 id="2-浏览器驱动"><a href="#2-浏览器驱动" class="headerlink" title="2.浏览器驱动"></a>2.浏览器驱动</h3><blockquote><p>现在我们有了车，需要的就剩<strong>司机</strong>了，但是就像出租车和司机都有自己对应的出租车公司一样，浏览器和浏览器驱动也需要对号入座，而且每一个浏览器驱动的版本也需要和特定的几个浏览器版本对应。</p></blockquote><ul><li><p><strong>chromedriver</strong><br>chromedriver是chrome浏览器指定的驱动，按照之前推荐的浏览器版本，我们需要下载一个对应的驱动版本，版本对照如下图：<br><img src="https://i.loli.net/2020/04/21/TtESH41G8Pdyi7K.png" srcset="/img/loading.gif" alt="llqdz (2).png"></p><p>最近较新的chrome版本也会有单独对应的驱动版本，我们可以根据安装的chrome版本<a href="https://npm.taobao.org/mirrors/chromedriver/" target="_blank" rel="noopener">下载</a>对应的驱动</p></li></ul><ul><li><strong>geckodriver</strong><br>geckodriver是Firefox浏览器指定的驱动，最新版本的Firefox我暂时还没踩到坑，所以对应的浏览器驱动版本我们也可以<a href="https://npm.taobao.org/mirrors/geckodriver/v0.26.0/" target="_blank" rel="noopener">下载</a>最新的。</li></ul><blockquote><p>至于其他的浏览器驱动比如IE的IEDriverServer，IE呢……emmmm……你们应该懂的。</p></blockquote><p><strong>驱动下载好后是一个<code>.exe</code>文件，我们可以把所有的驱动文件放到一个<code>driver</code>文件夹中，再将这个文件夹的路径添加到系统变量<code>Path</code>中。</strong></p><blockquote><p>如果觉得太麻烦也有偷懒的方法，直接把文件放到一个文件夹中，然后丢到你的Python安装目录下就行了。。</p></blockquote><p><em>至此，我们的环境就搭建好了，总结一下的话基本只需要把浏览器和对应的驱动弄好就完成了。</em></p><hr><h2 id="selenium"><a href="#selenium" class="headerlink" title="selenium"></a>selenium</h2><blockquote><p><em>在开始写代码之前不要忘了还需要在<strong>Python环境</strong>中安装<code>selenium</code>，我们之后在网页上的所有操作都会通过它来实现。</em></p></blockquote><p>selenium简介<br></p><details><br><summary>selenium是…</summary><p></p><blockquote><p>selenium是一个涵盖了一系列工具和库的总体项目，这些工具和库支持Web浏览器的自动化。它提供了扩展，以模拟用户与浏览器的交互，用于扩展浏览器分配的分发服务器，以及用于实现W3C WebDriver规范的基础结构 ，使你可以为所有主要的Web浏览器编写可互换的代码。Selenium的核心是WebDriver，它是编写可以在许多浏览器中互换运行的指令集的接口。<br></p></blockquote></details><p></p><h4 id="安装selenium"><a href="#安装selenium" class="headerlink" title="安装selenium"></a>安装<code>selenium</code></h4><pre><code class="bash">  pip install selenium</code></pre><blockquote><p>selenium支持多个浏览器，支持分布式运行且支持多种语言开发，能完成网页上的大部分操作，但是一些非网页操作比如文件上传操作，打开一个Windows资源管理器窗口选择上传的文件，这种操作是selenium无法完成的。</p></blockquote><h4 id="selenium的webdriver"><a href="#selenium的webdriver" class="headerlink" title="selenium的webdriver"></a>selenium的<code>webdriver</code></h4><p>webdriver是selenium的核心，我们主要通过调用它的API来实现在浏览器的各种操作，打开selenium目录就会看到如下：</p><pre><code> ├─common
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png"><link rel="icon" type="image/png" href="/img/favicon.png"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no"><meta http-equiv="x-ua-compatible" content="ie=edge"><meta name="theme-color" content="#54546c"><meta name="description" content="一些记录"><meta name="author" content="AoRuilin"><meta name="keywords" content="python,python3"><title>基于Python+selenium的UI自动化测试指南 - A.R.L</title><link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/5.12.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/mdbootstrap/4.13.0/css/mdb.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/3.0.1/github-markdown.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1067060_qzomjdt8bmp.css"><link rel="stylesheet" href="/lib/prettify/tomorrow-night-eighties.min.css"><link rel="stylesheet" href="/css/main.css"><link defer rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css"><meta name="generator" content="Hexo 4.2.0"></head><body><header style="height:70vh"><nav id="navbar" class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar"><div class="container"><a class="navbar-brand" href="/">&nbsp;<strong>A.R.L</strong>&nbsp;</a> <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><div class="animated-icon"><span></span><span></span><span></span></div></button><div class="collapse navbar-collapse" id="navbarSupportedContent"><ul class="navbar-nav ml-auto text-center"><li class="nav-item"><a class="nav-link" href="/">首页</a></li><li class="nav-item"><a class="nav-link" href="/archives/">归档</a></li><li class="nav-item"><a class="nav-link" href="/categories/">分类</a></li><li class="nav-item"><a class="nav-link" href="/tags/">标签</a></li><li class="nav-item"><a class="nav-link" href="/about/">关于</a></li><li class="nav-item"><a class="nav-link" href="/links/">友链</a></li><li class="nav-item" id="search-btn"><a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i class="iconfont icon-search"></i>&nbsp;&nbsp;</a></li></ul></div></div></nav><div class="view intro-2" id="background" parallax="true" style="background:url(https://i.loli.net/2020/04/18/1EVi2TNDR7A5fxm.jpg) no-repeat center center;background-size:cover"><div class="full-bg-img"><div class="mask rgba-black-light flex-center"><div class="container text-center white-text fadeInUp"><span class="h2" id="subtitle"></span><p class="mt-3 post-meta"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 星期四, 四月 16日 2020, 10:47 晚上</p><p class="mt-1"><span class="post-meta"><i class="far fa-chart-bar"></i> 6.6k 字 </span><span class="post-meta"><i class="far fa-clock"></i> 25 分钟</span></p></div></div></div></div></header><main><div class="container-fluid"><div class="row"><div class="d-none d-lg-block col-lg-2"></div><div class="col-lg-8 nopadding-md"><div class="container nopadding-md" id="board-ctn"><div class="py-5 z-depth-3" id="board"><div class="post-content mx-auto" id="post"><div class="markdown-body"><h1 id="Python-amp-selenium自动化测试"><a href="#Python-amp-selenium自动化测试" class="headerlink" title="Python&amp;selenium自动化测试"></a>Python&amp;selenium自动化测试</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><em>本篇将介绍如何使用<code>Python</code>和<code>selenium</code>，从编写你的第一个测试脚本到创建一个web端的UI自动化测试项目。主要针对刚开始或准备接触自动化测试的人，我们假设你已经拥有了基本的Python技能并且有一些面向对象编程的经验，那么这篇文章应该会对你有所帮助。</em></p><hr><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><blockquote><p>在开始前，我们先来了解一下一条自动化脚本是如何运作的，如果预先了解过或者见过自动化脚本运行效果就会知道，其实就是通过我们编写的代码运行后使浏览器去执行我们制定的各种操作步骤。这个场景就和坐出租车一样，乘客告诉司机要去哪，司机按照乘客的要求开车把我们送到目的地，在这里我们就是乘客，现在我们需要的就是<strong>司机</strong>和<strong>车</strong>。</p></blockquote><h3 id="1-浏览器"><a href="#1-浏览器" class="headerlink" title="1.浏览器"></a>1.浏览器</h3><blockquote><p>浏览器就是我们需要的<strong>车</strong>，一个web端项目在开发、调试、测试的过程中主要使用的浏览器就是chrome和Firefox了，我们主要介绍一下这两个浏览器。</p></blockquote><ul><li><p><strong>chrome</strong><br>在写这篇文章时chrome稳定版已经更新到81的版本了，最新版本前两天刚踩了坑，所以推荐使用60-79范围中的版本，因为我们需要一个稳定的运行环境，而且我们做的是自动化测试，不需要考虑兼容性测试。<br>这里肯定有人会问，chrome有自动更新啊！解决方法有几种，但我不保证对你就有用（手动狗头）。</p><ul><li>a.打开C:\Program Files (x86)\Google，强行删除Update目录</li><li>b.安装的时候把网断掉</li></ul><p>以上的方法都能用一段时间，如果它还是自己更新了，emmmmm…删掉重新再装一次那个版本吧，所以最好把浏览器安装包统一管理起来，一是好找，二是如果要测兼容也可以派上用场。</p></li><li><p><strong>Firefox</strong><br>推荐使用55以后的版本，Firefox关闭自动更新就很简单了，只需要几步，在设置中找到高级，点到更新后选择不检查更新，搞定~</p></li></ul><h3 id="2-浏览器驱动"><a href="#2-浏览器驱动" class="headerlink" title="2.浏览器驱动"></a>2.浏览器驱动</h3><blockquote><p>现在我们有了车，需要的就剩<strong>司机</strong>了，但是就像出租车和司机都有自己对应的出租车公司一样，浏览器和浏览器驱动也需要对号入座，而且每一个浏览器驱动的版本也需要和特定的几个浏览器版本对应。</p></blockquote><ul><li><p><strong>chromedriver</strong><br>chromedriver是chrome浏览器指定的驱动，按照之前推荐的浏览器版本，我们需要下载一个对应的驱动版本，版本对照如下图：<br><img src="https://i.loli.net/2020/04/21/TtESH41G8Pdyi7K.png" srcset="/img/loading.gif" alt="llqdz (2).png"></p><p>最近较新的chrome版本也会有单独对应的驱动版本，我们可以根据安装的chrome版本<a href="https://npm.taobao.org/mirrors/chromedriver/" target="_blank" rel="noopener">下载</a>对应的驱动</p></li></ul><ul><li><strong>geckodriver</strong><br>geckodriver是Firefox浏览器指定的驱动，最新版本的Firefox我暂时还没踩到坑，所以对应的浏览器驱动版本我们也可以<a href="https://npm.taobao.org/mirrors/geckodriver/v0.26.0/" target="_blank" rel="noopener">下载</a>最新的。</li></ul><blockquote><p>至于其他的浏览器驱动比如IE的IEDriverServer，IE呢……emmmm……你们应该懂的。</p></blockquote><p><strong>驱动下载好后是一个<code>.exe</code>文件，我们可以把所有的驱动文件放到一个<code>driver</code>文件夹中，再将这个文件夹的路径添加到系统变量<code>Path</code>中。</strong></p><blockquote><p>如果觉得太麻烦也有偷懒的方法，直接把文件放到一个文件夹中，然后丢到你的Python安装目录下就行了。。</p></blockquote><p><em>至此，我们的环境就搭建好了，总结一下的话基本只需要把浏览器和对应的驱动弄好就完成了。</em></p><hr><h2 id="selenium"><a href="#selenium" class="headerlink" title="selenium"></a>selenium</h2><blockquote><p><em>在开始写代码之前不要忘了还需要在<strong>Python环境</strong>中安装<code>selenium</code>，我们之后在网页上的所有操作都会通过它来实现。</em></p></blockquote><p>selenium简介<br></p><details><br><summary>selenium是…</summary><p></p><blockquote><p>selenium是一个涵盖了一系列工具和库的总体项目，这些工具和库支持Web浏览器的自动化。它提供了扩展，以模拟用户与浏览器的交互，用于扩展浏览器分配的分发服务器，以及用于实现W3C WebDriver规范的基础结构 ，使你可以为所有主要的Web浏览器编写可互换的代码。Selenium的核心是WebDriver，它是编写可以在许多浏览器中互换运行的指令集的接口。<br></p></blockquote></details><p></p><h4 id="安装selenium"><a href="#安装selenium" class="headerlink" title="安装selenium"></a>安装<code>selenium</code></h4><pre><code class="bash">  pip install selenium</code></pre><blockquote><p>selenium支持多个浏览器，支持分布式运行且支持多种语言开发，能完成网页上的大部分操作，但是一些非网页操作比如文件上传操作，打开一个Windows资源管理器窗口选择上传的文件，这种操作是selenium无法完成的。</p></blockquote><h4 id="selenium的webdriver"><a href="#selenium的webdriver" class="headerlink" title="selenium的webdriver"></a>selenium的<code>webdriver</code></h4><p>webdriver是selenium的核心，我们主要通过调用它的API来实现在浏览器的各种操作，打开selenium目录就会看到如下：</p><pre><code> ├─common
  ├─webdriver</code></pre><p>common中主要包含了各个<code>Exception</code>类，主要用法我们之后介绍。我们再看一看webdriver的目录：</p><pre><code>├─android
 ├─blackberry
 ├─chrome
@@ -76,7 +76,7 @@ input_element = WebDriverWait(driver, 15).until(ec.presence_of_element_located(i
 input_element.send_keys(&#39;python&#39;)
 
 driver.find_element_by_id(&#39;su&#39;).click()
-driver.close()</code></pre><p>下面列举几个常用的expected_conditions模块提供的条件判断：</p><ul><li><p><code>presence_of_element_located(locator)</code> -&gt; 参数传入定位器，判断定位的元素是否在DOM中加载完成（可以使不可见的元素），定位到元素后返回该元素</p></li><li><p><code>visibility_of_element_located(locator)</code> -&gt; 参数传入定位器，用于检查某个元素是否存在于页面的DOM上并且是可见的。可见性意味着不仅显示元素，而且元素的高度和宽度也大于0</p></li><li><p><code>visibility_of(element)</code> -&gt; 传入已知的存在于DOM中的元素，检查这个元素是否可见，一旦是可见的就返回这个元素</p></li><li><p><code>visibility_of_any_elements_located(locator)</code> -&gt; 参数传入定位器，检查web页面上至少有一个期望的元素是可见，定位到元素后返回这些元素的列表</p></li><li><p><code>invisibility_of_element(invisibility_of_element_located)</code> -&gt; 参数传入希望不可见的定位器，用于检查某个元素是否在DOM上不可见或不存在的期望</p></li><li><p><code>title_is(title)</code> -&gt; 参数传入预期的title字符串，检查页面标题是否符合预期，使用精确匹配，匹配返回True，若不匹配返回False</p></li><li><p><code>title_contains(title)</code> -&gt; 参数传入预期的title字符串，检查页面标题是否包含预期，使用模糊匹配，匹配返回True，若不匹配返回False</p></li><li><p><code>url_contains(url)</code> -&gt; 参数传入预期的url，检查当前url是否包含预期的url，使用模糊匹配，匹配返回True，若不匹配返回False</p></li><li><p><code>url_matches(url)</code> -&gt; 参数传入预期的url，检查当前url是否符合预期的url，使用精确匹配，匹配返回True，若不匹配返回False</p></li></ul><p>需进一步了解所有预期条件判断可以查看<code>expected_conditions</code>的源码。</p><h2 id="测试框架"><a href="#测试框架" class="headerlink" title="测试框架"></a>测试框架</h2><blockquote><p>现在我们已经能通过调用selenium的webdriver中的API实现网页操作了，但我们的目的是通过这些操作来实现自动化测试，其中必不可少的就是测试框架了，常用的测试框架包括<code>unittest</code>、<code>pytest</code>、<code>doctest</code>等等，我们这里主要使用<strong>unittest</strong>来完成。</p></blockquote><h3 id="unittest创建用例"><a href="#unittest创建用例" class="headerlink" title="unittest创建用例"></a>unittest创建用例</h3><p>unittest是Python内置的标准库，通过继承<code>unittest.TestCase</code>来创建测试用例，使用时需要注意的是你的方法名称必须以<strong>test</strong>开头，没有以此开头的都不会被执行。更加具体的介绍可以参考<a href="https://docs.python.org/2/library/unittest.html" target="_blank" rel="noopener">文档</a>，这里我们直接开始撸代码吧~</p><p>创建一个项目文件夹，在文件夹中创建名为<code>testcase.py</code>的文件，写入以下代码：</p><pre><code class="python">import unittest  # 导入unittest
+driver.close()</code></pre><p>下面列举几个常用的expected_conditions模块提供的条件判断：</p><ul><li><p><code>presence_of_element_located(locator)</code> -&gt; 参数传入定位器，判断定位的元素是否在DOM中加载完成（可以使不可见的元素），定位到元素后返回该元素</p></li><li><p><code>visibility_of_element_located(locator)</code> -&gt; 参数传入定位器，用于检查某个元素是否存在于页面的DOM上并且是可见的。可见性意味着不仅显示元素，而且元素的高度和宽度也大于0</p></li><li><p><code>visibility_of(element)</code> -&gt; 传入已知的存在于DOM中的元素，检查这个元素是否可见，一旦是可见的就返回这个元素</p></li><li><p><code>visibility_of_any_elements_located(locator)</code> -&gt; 参数传入定位器，检查web页面上至少有一个期望的元素是可见，定位到元素后返回这些元素的列表</p></li><li><p><code>invisibility_of_element(invisibility_of_element_located)</code> -&gt; 参数传入希望不可见的定位器，用于检查某个元素是否在DOM上不可见或不存在的期望</p></li><li><p><code>title_is(title)</code> -&gt; 参数传入预期的title字符串，检查页面标题是否符合预期，使用精确匹配，匹配返回True，若不匹配返回False</p></li><li><p><code>title_contains(title)</code> -&gt; 参数传入预期的title字符串，检查页面标题是否包含预期，使用模糊匹配，匹配返回True，若不匹配返回False</p></li><li><p><code>url_contains(url)</code> -&gt; 参数传入预期的url，检查当前url是否包含预期的url，使用模糊匹配，匹配返回True，若不匹配返回False</p></li><li><p><code>url_matches(url)</code> -&gt; 参数传入预期的url，检查当前url是否符合预期的url，使用精确匹配，匹配返回True，若不匹配返回False</p></li></ul><p>需进一步了解所有预期条件判断可以查看<code>expected_conditions</code>的源码。</p><h2 id="测试框架"><a href="#测试框架" class="headerlink" title="测试框架"></a>测试框架</h2><blockquote><p>现在我们已经能通过调用selenium的webdriver中的API实现网页操作了，但我们的目的是通过这些操作来实现自动化测试，其中必不可少的就是测试框架了，常用的测试框架包括<code>unittest</code>、<code>pytest</code>、<code>doctest</code>等等，我们这里主要使用<strong>unittest</strong>来完成。</p></blockquote><h3 id="unittest创建用例"><a href="#unittest创建用例" class="headerlink" title="unittest创建用例"></a>unittest创建用例</h3><p>unittest是Python内置的标准库，通过继承<code>unittest.TestCase</code>来创建测试用例，使用时需要注意的是你的方法名称必须以<strong>test</strong>开头，没有以此开头的都不会被执行。更加具体的介绍可以参考<a href="https://docs.python.org/2/library/unittest.html" target="_blank" rel="noopener">文档</a>，这里我们直接开始撸代码吧~</p><p>创建一个项目文件夹，在文件夹中创建名为<code>test_case.py</code>的文件，写入以下代码：</p><pre><code class="python">import unittest  # 导入unittest
 
 from selenium import webdriver
 
@@ -100,10 +100,192 @@ class MyTest(unittest.TestCase):  # 继承unittest.TestCase创建测试用例
 
 
 if __name__ == &#39;__main__&#39;:
-    unittest.main()</code></pre><p>这段代码中的<code>setUp</code>和<code>tearDown</code>方法是unittest框架中的测试固件，setUp是定义一些有固定用途的方法，tearDown用于用例运行完后释放资源，中间以<code>test_</code>开头命名的方法就是测试用例，在运行时，它们会按照特定的顺序依次运行，先运行setUp，然后是test开头命名的测试用例<em>（测试用例可以有多个，默认以方法名首字母排序的顺序运行，当然你也可以在命名时在”test_”后面加上阿拉伯数字来规定你的用例运行顺序，只是这样的命名不是很优雅）</em>，最后运行tearDown，可以参考下图：<br><img src="https://i.loli.net/2020/05/05/DhMLxjQyYVafoqF.png" srcset="/img/loading.gif" alt="yunxing (2).png"></p><p>测试用例都会检查实际和期望结果是否一致，要实现这个操作就要用到代码中的<code>tc.assertEqual()</code>了，这个方法接收3个参数，前两个必要参数<code>first</code>和<code>second</code>写入预期和实际结果，如果<code>first != second</code>，则抛出<code>AssertionError</code>并中断运行，<code>msg</code>参数是抛出异常的描述，可不传。</p><blockquote><p>除了assertEqual，框架中还有很多其他的断言方法（具体参考<strong>unittest.TestCase</strong>源码），比如<code>assertNotEqual</code>，参数与assertEqual方法相同，区别是如果<code>first == second</code>，则抛出<code>AssertionError</code>并中断运行。</p></blockquote><p>现在我们已经能使用unittest创建测试用例了，那么创建的用例我们每次要一个个点运行来执行吗？<br>当然不需要，我们要实现的是自动执行所有测试用例<em>PS:这样也只能算半自动化测试</em>，接下来介绍unittest中的用例集成。</p><h3 id="unittest用例集成"><a href="#unittest用例集成" class="headerlink" title="unittest用例集成"></a>unittest用例集成</h3><p>要将所有创建的用例集成起来一起运行，需要用到<code>unittest.suite</code>的<code>TestSuite</code>类，使用方法为创建一个<strong>TestSuite实例</strong>，然后添加测试用例实例。<br>将所有测试用例添加到<strong>TestSuite实例</strong>中后，再实例一个<strong>runner</strong>对象，这个runner可以使用TextTestRunner(<code>unittest.TextTestRunner()</code>)创建，也可以使用<code>HTMLTestRunner</code>等第三方工具来创建并输出报告</p><p>具体参考以下代码：</p><pre><code class="python"># 可以单独创建一个.py文件写入以下代码
+    unittest.main()</code></pre><p>这段代码中的<code>setUp</code>和<code>tearDown</code>方法是unittest框架中的测试固件，setUp是定义一些有固定用途的方法，tearDown用于用例运行完后释放资源，中间以<code>test_</code>开头命名的方法就是测试用例，在运行时，它们会按照特定的顺序依次运行，先运行setUp，然后是test开头命名的测试用例<em>（测试用例可以有多个，默认以方法名首字母排序的顺序运行，当然你也可以在命名时在”test_”后面加上阿拉伯数字来规定你的用例运行顺序，只是这样的命名不是很优雅）</em>，最后运行tearDown，可以参考下图：<br><img src="https://i.loli.net/2020/05/05/DhMLxjQyYVafoqF.png" srcset="/img/loading.gif" alt="yunxing (2).png"></p><p>测试用例都会检查实际和期望结果是否一致，要实现这个操作就要用到代码中的<code>tc.assertEqual()</code>了，这个方法接收3个参数，前两个必要参数<code>first</code>和<code>second</code>写入预期和实际结果，如果<code>first != second</code>，则抛出<code>AssertionError</code>并中断运行，<code>msg</code>参数是抛出异常的描述，可不传。</p><blockquote><p>除了assertEqual，框架中还有很多其他的断言方法（具体参考<strong>unittest.TestCase</strong>源码），比如<code>assertNotEqual</code>，参数与assertEqual方法相同，区别是如果<code>first == second</code>，则抛出<code>AssertionError</code>并中断运行。</p></blockquote><p>现在我们已经能使用unittest创建测试用例了，那么创建的用例我们每次要一个个点运行来执行吗？<br>当然不需要，我们要实现的是自动执行所有测试用例<em>PS:这样也只能算半自动化测试</em>，接下来介绍unittest中的用例集成。</p><h3 id="unittest用例集成"><a href="#unittest用例集成" class="headerlink" title="unittest用例集成"></a>unittest用例集成</h3><p>要将所有创建的用例集成起来一起运行，需要用到<code>unittest.suite</code>的<code>TestSuite</code>类，使用方法为创建一个<strong>TestSuite实例</strong>，然后添加测试用例实例。<br>将所有测试用例添加到<strong>TestSuite实例</strong>中后，再实例一个<strong>runner</strong>对象，这个runner可以使用TextTestRunner(<code>unittest.TextTestRunner()</code>)创建，也可以使用<code>HTMLTestRunner</code>等第三方工具来创建并输出报告</p><p>创建一个test_suits.py文件，写入以下代码：</p><pre><code class="python">from unittest.suite import TestSuite
+from unittest import TextTestRunner
 
-from unittest.suite import TestSuite
-from testcase import MyTest</code></pre><h2 id="POM设计思想"><a href="#POM设计思想" class="headerlink" title="POM设计思想"></a>POM设计思想</h2><p>之前我们介绍了测试框架unittest，并且使用这个框架创建并集成运行测试用例，</p><blockquote><p>POM,即Page Object Model，用中文就是页面对象模型，这是一种非常普遍的框架设计思想</p></blockquote></div><hr><div><p><span><i class="iconfont icon-inbox"></i> <a class="hover-with-bg" href="/categories/Python/">Python</a> &nbsp; <a class="hover-with-bg" href="/categories/Python/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/">自动化测试</a> &nbsp; </span>&nbsp;&nbsp; <span><i class="iconfont icon-tag"></i> <a class="hover-with-bg" href="/tags/Python/">Python</a> <a class="hover-with-bg" href="/tags/selenium/">selenium</a></span></p><p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://zh.wikipedia.org/wiki/Wikipedia:CC_BY-SA_3.0%E5%8D%8F%E8%AE%AE%E6%96%87%E6%9C%AC" target="_blank" rel="nofollow noopener noopener">CC BY-SA 3.0协议</a> 。转载请注明出处！</p><div class="post-prevnext row"><div class="post-prev col-6"></div><div class="post-next col-6"></div></div></div><div class="comments" id="comments"><script defer src="https://utteranc.es/client.js" repo="LitStronger/commit-utterances" issue-term="pathname" theme="github-dark-orange" crossorigin="anonymous"></script></div></div></div></div></div><div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn"><div id="toc-start"></div><div id="toc"><p class="h5"><i class="far fa-list-alt"></i>&nbsp;目录</p><div id="tocbot"></div></div></div></div></div></main><a class="z-depth-1" id="scroll-top-button" href="#" role="button"><i class="fa fa-chevron-up scroll-top-arrow" aria-hidden="true"></i></a><div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable modal-lg" role="document"><div class="modal-content"><div class="modal-header text-center"><h4 class="modal-title w-100 font-weight-bold">搜索</h4><button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body mx-3"><div class="md-form mb-5"><input type="text" id="local-search-input" class="form-control validate"> <label data-error="x" data-success="v" for="local-search-input">关键词</label></div><div class="list-group" id="local-search-result"></div></div></div></div></div><footer class="mt-5"><div class="text-center py-3"><div><a href="https://hexo.io" target="_blank" rel="nofollow noopener"><b>Hexo</b></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><b>Fluid</b></a></div></div></footer><script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script><script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script><script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script><script src="https://cdn.staticfile.org/mdbootstrap/4.13.0/js/mdb.min.js"></script><script src="/js/main.js"></script><script src="/js/lazyload.js"></script><script src="https://cdn.staticfile.org/tocbot/4.10.0/tocbot.min.js"></script><script>$(document).ready(function(){var s=$("#navbar").height(),c=$("#toc"),t=$("#board-ctn"),o=t.offset().top,i=2*o+t.height();$(window).scroll(function(){var t=$("#toc-start").offset().top-s,o=document.body.scrollTop+document.documentElement.scrollTop;t<=o&&o<=i?c.css({display:"block",position:"fixed",top:s}):o<=t?c.css({position:"",top:""}):i<o&&c.css("display","none")}),tocbot.init({tocSelector:"#tocbot",contentSelector:".post-content",headingSelector:"h1,h2,h3,h4,h5,h6",linkClass:"tocbot-link",activeLinkClass:"tocbot-active-link",listClass:"tocbot-list",isCollapsedClass:"tocbot-is-collapsed",collapsibleClass:"tocbot-is-collapsible",scrollSmooth:!0,headingsOffset:-o}),0<$(".toc-list-item").length&&$("#toc > p").css("visibility","visible");var l=t.css("margin-right");$("#toc-ctn").css({right:l})})</script><script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script><script src="/js/clipboard-use.js"></script><script src="https://cdn.staticfile.org/prettify/188.0.0/prettify.min.js"></script><script>$(document).ready(function(){$("pre").addClass("prettyprint  linenums"),prettyPrint()})</script><script src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js"></script><script>var typed=new Typed("#subtitle",{strings:["  ","基于Python+selenium的UI自动化测试指南&nbsp;"],cursorChar:"_",typeSpeed:70,loop:!1});typed.stop(),$(document).ready(function(){$(".typed-cursor").addClass("h2"),typed.start()})</script><script src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js"></script><script>anchors.options = {
+from test_case import MyTest  # 导入测试用例
+
+suite = TestSuite()  # 实例化测试集suite对象
+
+# 可以创建多个用例并添加到测试集中
+# test_用例号 = 类名(&#39;方法名&#39;)
+test_01 = MyTest(&#39;test_baidu&#39;)  # 实例化测试用例对象
+
+suite.addTests([test_01])  # 将测试用例加载到测试集中
+
+runner = TextTestRunner()  # 实例化运行runner对象
+runner.run(suite)  # 使用runner运行测试集
+</code></pre><p>运行时会按照你定义的<strong>用例编号</strong>的顺序运行，在运行时会输出测试用例的名称，在发生错误时输出报错信息，并在测试运行结束时打印出结果。<br>如果觉得这样的输出不够全面，可以使用第三方工具来输出报告，但这里不做介绍了，<code>HTMLTestRunner</code>和<a href="http://allure.qatools.ru/" target="_blank" rel="noopener"><code>allure</code></a>都是不错的选择，用法也很简单，可以自行了解。</p><h2 id="POM设计思想"><a href="#POM设计思想" class="headerlink" title="POM设计思想"></a>POM设计思想</h2><blockquote><p>之前我们介绍了测试框架unittest，并且使用这个框架创建并集成运行测试用例，以后所有的测试用例都会按照这个方法来开发和调试，但是如果每写一个用例都要从打开浏览器写到关闭浏览器的话，很多步骤就重复了，这也代表我们的代码也有<strong>很多重复</strong>的，这会导致代码维护成本越来越大，如果<strong>前端UI变化</strong>非常频繁的话，这样的代码维护起来简直就是噩梦。。。<br>怎么解决呢？<br>我们来看接下来介绍的一种框架设计思想-POM</p></blockquote><p><strong>POM</strong>,即<strong>Page Object Model</strong>，用中文就是页面对象模型，这是一种非常普遍的框架设计思想，POM是解决问题的一种思想，并不是框架，在这里我们主要用来解决前端UI变化频繁导致我们代码维护成本过大的问题。<br>我们现在的测试用例把页面元素和页面操作代码和测试用例都写在了一起，使用POM后，区别就是把页面元素和页面操作代码从测试用例分离出来单独写成一个<strong>PageObject类</strong>文件，如果前端UI有变化，我们就只需要改<strong>PageObject类</strong>中的代码，不需要改测试用例。<br>经过文章之前的操作，我们创建了一个test_case文件和一个test_suits文件，现在我们创建一个<code>page_object.py</code>文件，将页面元素和操作代码分离到这个文件中，代码如下：<strong>(代码有点长，建议点代码区域右上角复制到你自己的编辑器中查看)</strong></p><pre><code class="python">import time
+from unittest import TestCase
+
+from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+
+class ElementLocator:
+
+    input_loc = By.ID, &#39;kw&#39;  # 输入框
+    search_btn_loc = By.ID, &#39;su&#39;  # 搜索按钮
+    tab_inner_loc = By.CLASS_NAME, &#39;s_tab_inner&#39;  # 顶部tab
+    tab_inner_web_loc = By.XPATH, &#39;//div[@class=&quot;s_tab_inner&quot;]/b&#39;  # 顶部网页tab
+
+
+class PageObject:
+    def __init__(self, driver):
+        self.driver = driver
+
+    def click_button(self, btn_loc, wait=True):
+        &quot;&quot;&quot;
+        单独点击一个按钮
+
+        :param btn_loc: 按钮定位器
+        :param wait: 是否等待
+        :return: None
+        &quot;&quot;&quot;
+        if wait:
+            time.sleep(0.5)
+            self.driver.find_element(*btn_loc).click()
+        else:
+            self.driver.find_element(*btn_loc).click()
+
+    def send_text(self, input_loc, text):
+        &quot;&quot;&quot;
+        输入文本
+        :param input_loc: 输入框定位器
+        :param text: 输入文本内容
+        :return: None
+        &quot;&quot;&quot;
+        self.driver.find_element(*input_loc).send_keys(text)
+
+    def webdriver_wait(self):
+
+        return WebDriverWait(self.driver, 15)
+
+    @staticmethod
+    def element_presence(element_loc):
+        &quot;&quot;&quot;
+        判断页面中是否存在这个元素
+        :param element_loc: 元素定位，传入元组(by, locator)
+        :return:
+        &quot;&quot;&quot;
+
+        return EC.presence_of_element_located(element_loc)
+
+    def assert_equal(self, text, text_loc):
+        &quot;&quot;&quot;
+        断言文本相等
+
+        :param text: 期望文本
+        :param text_loc: 实际文本定位器
+        :return: None
+        &quot;&quot;&quot;
+        try:
+            wait = self.webdriver_wait()
+            show_up = self.element_presence(text_loc)
+            wait.until(show_up)
+            actual_text = self.driver.find_element(*text_loc).text
+            print(f&#39;期望： &quot;{text}&quot;, 实际： &quot;{actual_text}&quot;&#39;)
+        except NoSuchElementException:
+            print(f&#39;没有{text}&#39;)
+        except ElementNotVisibleException:
+            print(f&#39;未找到{text}元素&#39;)
+        except Exception as e:
+            print(f&#39;{e}， {text}断言异常，与期望不符&#39;)
+        else:
+            tc = TestCase()
+            tc.assertEqual(text, actual_text)
+
+    def assert_in(self, text, text_loc, reverse=False):
+        &quot;&quot;&quot;
+        断言文本在页面中
+
+        :param text: 期望文本
+        :param text_loc: 实际文本定位器
+        :param reverse: True-&gt;取出文本all_text在text中，False-&gt;text在取出文本all_text中
+        :return: None
+        &quot;&quot;&quot;
+        try:
+            wait = self.webdriver_wait()
+            show_up = self.element_presence(text_loc)
+            wait.until(show_up)
+            actual_text = self.driver.find_element(*text_loc).text
+            print(f&#39;所有文本：{actual_text}&#39;)
+        except NoSuchElementException:
+            print(f&#39;没有{text}&#39;)
+        except ElementNotVisibleException:
+            print(f&#39;未找到{text}元素&#39;)
+        except Exception as e:
+            print(f&#39;&quot;{e}, {text}断言异常，不在页面中&#39;)
+        else:
+            tc = TestCase()
+            if reverse:
+                tc.assertIn(actual_text, text)
+            else:
+                tc.assertIn(text, actual_text)
+
+    def assert_text_in_page(self, text, text_loc):
+        &quot;&quot;&quot;
+        断言文本在指定区域中
+
+        :param text: 期望文本
+        :param text_loc: 实际文本定位器
+        :return:
+        &quot;&quot;&quot;
+        try:
+            element_list = self.driver.find_elements(*text_loc)
+            text_list = []
+            for s in element_list:
+                actual_text = s.text
+                text_list.append(actual_text)
+            all_text = &#39;&#39;.join(text_list)
+        except NoSuchElementException:
+            print(f&#39;没有{text}&#39;)
+        except ElementNotVisibleException:
+            print(f&#39;未找到{text}元素&#39;)
+        except Exception as e:
+            print(f&#39;{e}, {text}断言异常，不在指定区域中&#39;)
+        else:
+            tc = TestCase()
+            tc.assertIn(text, all_text)
+
+    def baidu_search(self, search_content):
+        &quot;&quot;&quot;
+        搜索操作
+        :param search_content:搜索内容
+        :return:
+        &quot;&quot;&quot;
+        self.send_text(ElementLocator.input_loc, search_content)
+        self.click_button(ElementLocator.search_btn_loc, wait=True)
+</code></pre><p>在这个文件中，一共有两个类，<code>ElementLocator</code>类中将所有的元素定位器写进去统一管理，前端UI变化后我们就可以直接在这个类中找到对应的元素修改就行了。<code>PageObject</code>类中封装了一些常用的方法，比如点击，输入，等待和断言，还有很多其他的方法比如刷新页面，切换窗口等等都可以封装在这里，这个类最后一个方法<code>baidu_search</code>就是页面操作了，这里每个方法中的操作颗粒度可以根据你的用例情况来决定要多细，在用例的类中，我们就通过调用这些方法来完成不同的操作步骤。</p><p>让我们再来看看用例的类文件，在之前创建的<code>test_case.py</code>文件中，我们修改我们的代码如下：</p><pre><code class="python">import unittest
+from selenium import webdriver
+
+from page_object import ElementLocator, PageObject  # 导入之前创建的两个类
+
+
+class MyTest(unittest.TestCase):
+    def setUp(self) -&gt; None:
+        self.driver = webdriver.Chrome()
+        self.driver.implicitly_wait(8)
+        self.base_url = &#39;https://www.baidu.com&#39;
+
+        self.page = PageObject(self.driver)  # 实例化页面操作对象
+        self.element = ElementLocator()  # 实例化元素定位器对象
+
+    def test_baidu(self):
+        self.driver.get(self.base_url)
+        self.page.baidu_search(&#39;selenium&#39;)  # 搜索selenium的操作
+        self.page.assert_in(&#39;网页&#39;, self.element.tab_inner_loc)  # 断言操作
+        self.page.assert_equal(&#39;网页&#39;, self.element.tab_inner_web_loc)  # 断言操作
+
+    def tearDown(self) -&gt; None:
+        self.driver.close()
+
+
+if __name__ == &#39;__main__&#39;:
+    unittest.main()
+</code></pre><p>现在如果前端UI更改甚至需求更改的话，我们就只需要更改<code>page_object.py</code>中的两个类中的代码就行了，特别是将页面元素定位器统一管理后，可以有效的减少维护成本，再创建新的用例也能方便许多。</p><h2 id="代码结构与配置文件"><a href="#代码结构与配置文件" class="headerlink" title="代码结构与配置文件"></a>代码结构与配置文件</h2><blockquote><p>时间不够了，后面继续写。。。。</p></blockquote></div><hr><div><p><span><i class="iconfont icon-inbox"></i> <a class="hover-with-bg" href="/categories/Python/">Python</a> &nbsp; <a class="hover-with-bg" href="/categories/Python/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/">自动化测试</a> &nbsp; </span>&nbsp;&nbsp; <span><i class="iconfont icon-tag"></i> <a class="hover-with-bg" href="/tags/Python/">Python</a> <a class="hover-with-bg" href="/tags/selenium/">selenium</a></span></p><p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://zh.wikipedia.org/wiki/Wikipedia:CC_BY-SA_3.0%E5%8D%8F%E8%AE%AE%E6%96%87%E6%9C%AC" target="_blank" rel="nofollow noopener noopener">CC BY-SA 3.0协议</a> 。转载请注明出处！</p><div class="post-prevnext row"><div class="post-prev col-6"></div><div class="post-next col-6"></div></div></div><div class="comments" id="comments"><script defer src="https://utteranc.es/client.js" repo="LitStronger/commit-utterances" issue-term="pathname" theme="github-dark-orange" crossorigin="anonymous"></script></div></div></div></div></div><div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn"><div id="toc-start"></div><div id="toc"><p class="h5"><i class="far fa-list-alt"></i>&nbsp;目录</p><div id="tocbot"></div></div></div></div></div></main><a class="z-depth-1" id="scroll-top-button" href="#" role="button"><i class="fa fa-chevron-up scroll-top-arrow" aria-hidden="true"></i></a><div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable modal-lg" role="document"><div class="modal-content"><div class="modal-header text-center"><h4 class="modal-title w-100 font-weight-bold">搜索</h4><button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body mx-3"><div class="md-form mb-5"><input type="text" id="local-search-input" class="form-control validate"> <label data-error="x" data-success="v" for="local-search-input">关键词</label></div><div class="list-group" id="local-search-result"></div></div></div></div></div><footer class="mt-5"><div class="text-center py-3"><div><a href="https://hexo.io" target="_blank" rel="nofollow noopener"><b>Hexo</b></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><b>Fluid</b></a></div></div></footer><script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script><script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script><script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script><script src="https://cdn.staticfile.org/mdbootstrap/4.13.0/js/mdb.min.js"></script><script src="/js/main.js"></script><script src="/js/lazyload.js"></script><script src="https://cdn.staticfile.org/tocbot/4.10.0/tocbot.min.js"></script><script>$(document).ready(function(){var s=$("#navbar").height(),c=$("#toc"),t=$("#board-ctn"),o=t.offset().top,i=2*o+t.height();$(window).scroll(function(){var t=$("#toc-start").offset().top-s,o=document.body.scrollTop+document.documentElement.scrollTop;t<=o&&o<=i?c.css({display:"block",position:"fixed",top:s}):o<=t?c.css({position:"",top:""}):i<o&&c.css("display","none")}),tocbot.init({tocSelector:"#tocbot",contentSelector:".post-content",headingSelector:"h1,h2,h3,h4,h5,h6",linkClass:"tocbot-link",activeLinkClass:"tocbot-active-link",listClass:"tocbot-list",isCollapsedClass:"tocbot-is-collapsed",collapsibleClass:"tocbot-is-collapsible",scrollSmooth:!0,headingsOffset:-o}),0<$(".toc-list-item").length&&$("#toc > p").css("visibility","visible");var l=t.css("margin-right");$("#toc-ctn").css({right:l})})</script><script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script><script src="/js/clipboard-use.js"></script><script src="https://cdn.staticfile.org/prettify/188.0.0/prettify.min.js"></script><script>$(document).ready(function(){$("pre").addClass("prettyprint  linenums"),prettyPrint()})</script><script src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js"></script><script>var typed=new Typed("#subtitle",{strings:["  ","基于Python+selenium的UI自动化测试指南&nbsp;"],cursorChar:"_",typeSpeed:70,loop:!1});typed.stop(),$(document).ready(function(){$(".typed-cursor").addClass("h2"),typed.start()})</script><script src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js"></script><script>anchors.options = {
       placement: "right",
       visible: "hover",
       

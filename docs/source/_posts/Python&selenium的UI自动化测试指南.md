@@ -411,7 +411,6 @@ runner.run(suite)  # 使用runner运行测试集
  ```python
 import time
 from unittest import TestCase
-
 from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -419,7 +418,6 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class ElementLocator:
-
     input_loc = By.ID, 'kw'  # 输入框
     search_btn_loc = By.ID, 'su'  # 搜索按钮
     tab_inner_loc = By.CLASS_NAME, 's_tab_inner'  # 顶部tab
@@ -433,7 +431,6 @@ class PageObject:
     def click_button(self, btn_loc, wait=True):
         """
         单独点击一个按钮
-
         :param btn_loc: 按钮定位器
         :param wait: 是否等待
         :return: None
@@ -453,9 +450,8 @@ class PageObject:
         """
         self.driver.find_element(*input_loc).send_keys(text)
 
-    def webdriver_wait(self):
-
-        return WebDriverWait(self.driver, 15)
+    def webdriver_wait(self, timeout):
+        return WebDriverWait(self.driver, timeout)
 
     @staticmethod
     def element_presence(element_loc):
@@ -464,19 +460,17 @@ class PageObject:
         :param element_loc: 元素定位，传入元组(by, locator)
         :return:
         """
-
         return EC.presence_of_element_located(element_loc)
 
     def assert_equal(self, text, text_loc):
         """
         断言文本相等
-
         :param text: 期望文本
         :param text_loc: 实际文本定位器
         :return: None
         """
         try:
-            wait = self.webdriver_wait()
+            wait = self.webdriver_wait(15)
             show_up = self.element_presence(text_loc)
             wait.until(show_up)
             actual_text = self.driver.find_element(*text_loc).text
@@ -494,14 +488,13 @@ class PageObject:
     def assert_in(self, text, text_loc, reverse=False):
         """
         断言文本在页面中
-
         :param text: 期望文本
         :param text_loc: 实际文本定位器
         :param reverse: True->取出文本all_text在text中，False->text在取出文本all_text中
         :return: None
         """
         try:
-            wait = self.webdriver_wait()
+            wait = self.webdriver_wait(15)
             show_up = self.element_presence(text_loc)
             wait.until(show_up)
             actual_text = self.driver.find_element(*text_loc).text
@@ -522,7 +515,6 @@ class PageObject:
     def assert_text_in_page(self, text, text_loc):
         """
         断言文本在指定区域中
-
         :param text: 期望文本
         :param text_loc: 实际文本定位器
         :return:

@@ -406,7 +406,7 @@ runner.run(suite)  # 使用runner运行测试集
  
  **POM**,即**Page Object Model**，用中文就是页面对象模型，这是一种非常普遍的框架设计思想，POM是解决问题的一种思想，并不是框架，在这里我们主要用来解决前端UI变化频繁导致我们代码维护成本过大的问题。
  我们现在的测试用例把页面元素和页面操作代码和测试用例都写在了一起，使用POM后，区别就是把页面元素和页面操作代码从测试用例分离出来单独写成一个**PageObject类**文件，如果前端UI有变化，我们就只需要改**PageObject类**中的代码，不需要改测试用例。
- 经过文章之前的操作，我们创建了一个test_case文件和一个test_suits文件，现在我们创建一个`page_object.py`文件，将页面元素和操作代码分离到这个文件中，代码如下：**(代码有点长，建议点代码区域右上角复制到你自己的编辑器中查看)**
+ 经过文章之前的操作，我们创建了一个test_case文件和一个test_suits文件，现在我们创建一个`page_operation.py`文件，将页面元素和操作代码分离到这个文件中，代码如下：**(代码有点长，建议点代码区域右上角复制到你自己的编辑器中查看)**
  
  ```python
 import time
@@ -554,7 +554,7 @@ class PageObject:
 import unittest
 from selenium import webdriver
 
-from page_object import ElementLocator, PageObject  # 导入之前创建的两个类
+from page_operation import ElementLocator, PageObject  # 导入之前创建的两个类
 
 
 class MyTest(unittest.TestCase):
@@ -580,9 +580,95 @@ if __name__ == '__main__':
     unittest.main()
 
 ```
-现在如果前端UI更改甚至需求更改的话，我们就只需要更改`page_object.py`中的两个类中的代码就行了，特别是将页面元素定位器统一管理后，可以有效的减少维护成本，再创建新的用例也能方便许多。
+现在如果前端UI更改甚至需求更改的话，我们就只需要更改`page_operation.py`中的两个类中的代码就行了，特别是将页面元素定位器统一管理后，可以有效的减少维护成本，再创建新的用例也能方便许多。
 
 
 ## 代码结构与配置文件
 
- > 时间不够了，后面继续写。。。。
+ > 如果你经常看别人写的代码，你会发现有的代码看起来总是很舒服，结构非常清晰，但也有很多代码，虽然逻辑没有问题，但看起来总是特别难懂。在写代码时，随着代码量的增加，如果不去用一些方法将代码规范起来的话，那么这样的代码就会是特别难懂的那种，所以接下来我们就来介绍怎么把代码规范管理起来。
+
+ ### 代码结构
+  
+  现在我们已经有了用例、用例集成和页面操作的文件，这里只有一条用例，当我们创建的用例越来越多，这些用例就需要一个文件夹统一管理起来了，所以我们创建一个`test_case`文件夹，将用例文件和用例集成文件都放到里面，同样的方法也可以用在页面对象和操作的代码上，创建一个`page_object`文件夹，将`page_operation.py`文件放到这个文件夹中，随着页面定位器的增多，我们可以将文件中的`ElementLocator`类拿出来单独创建一个`element_loc.py`文件存放在`page_object`文件夹中，在页面操作的代码中的几个`assert`方法在很多地方都能用到，所以我们可以将其放到一个**公共模块**中，创建一个`common`文件夹，在其中创建`assert_text.py`文件来存放这些断言代码，再创建一个`config`文件夹在之后的配置文件介绍中会用到，最后我们的代码结构就像这样：
+  
+  ```
+ui_auto
+├─common
+│  └─assert_text.py
+├─config
+├─page_object
+│  ├─element_loc.py
+│  └─page_operation.py
+├─test_case
+│  ├─baidu.py
+│  ├─test_suits.py
+```
+  之后可以在`common`中创建所有可以公共使用的功能代码，`page_object`中的操作代码可以根据自己的代码量来确定颗粒度，`test_case`中用例的文件和操作代码同理。
+ 
+ ### 配置文件
+ 
+  在用例的代码中，有些部分也是公用的，比如访问的**url**、登录用到的**账号密码**等信息、需要操作数据库时用到的**数据库信息**，如果将这些都在每次用到时单独写一遍，那么这样的代码维护成本就太高了，所以编程是免不了写配置文件的，写了配置文件后，也能有效的减少你代码的维护成本，我们将这些内容都用配置文件统一管理起来，这样在这些信息有变化时我们只需要更改配置文件即可，非常方便。
+  
+  配置文件有很多种，这里我们主要使用`yaml`
+  
+  yaml是专门用来写配置文件的语言，简洁强大，我们现在使用一些简单的语法来实现，具体语法这里我们不做介绍，可以自行百度。
+  
+  在之前创建的`config`文件夹中创建`config.yaml`文件，将以下内容写入文件中：
+  
+  ```yaml
+project_name:
+    dec: '一段描述'
+    url: 'https://www.baidu.com'
+    api: '接口地址'
+    user_data: {
+      'username': '账号',
+      'password': '密码',
+      'name': '用户名'
+    }
+
+mysql:
+   dec: 'mysql的配置信息'
+   host: ''
+   username: ''
+   password: ''
+   port: 
+```
+
+ 配置文件写好了，怎么讲里面的内容读取出来使用呢？
+ - python有专门操作yaml文件的库，直接安装~
+ 
+ ```
+pip install pyyaml
+```
+
+ - 在common文件夹中创建`read_config.py`文件，写入以下代码：
+ 
+ ```python
+import yaml
+def read_config(config_path):
+    """
+    公用的配置读取函数
+    :param config_path: 获取config文件的路径
+    """
+    with open(config_path, 'rb') as f:
+        yaml.warnings({'YAMLLoadWarning': False})  # 忽略警告，可以不写或者使用yaml.safe_load()
+        config = yaml.load(f.read())  # 读取文件
+        f.close()
+        return config
+```
+ 
+ - 需要读取配置时，使用以下代码就可以得到你想要的内容：
+ 
+ ```python
+from common.read_config import read_config
+config = read_config('D:\\project_name\\config\\config.yaml')  # 这里的路径写入你config.yaml文件的真实路径
+url = config['project_name']['url']
+```
+ 可以自行查看将url打印出来的结果，是不是和你config.yaml文件中的url一样呢~
+
+
+### 总结
+
+ 使用`Python`和`selenium`创建自动化测试项目的介绍就到这里啦。
+ 看完文章后大家应该对web端的UI自动化测试有了一定的了解，这篇文章对`selenium`的用法介绍的并不多，就需要大家多多实践啦，代码不能光看（CV也不行！），要写出来~
+ 这次就写到这了，之后会对一些这次没有写到的公用模块的功能进行介绍，敬请期待~

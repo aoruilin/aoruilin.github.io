@@ -604,6 +604,30 @@ ui_auto
 │  ├─test_suits.py
 ```
   之后可以在`common`中创建所有可以公共使用的功能代码，`page_object`中的操作代码可以根据自己的代码量来确定颗粒度，`test_case`中用例的文件和操作代码同理。
+  
+  #### 公共功能样例
+  
+   我们现在已经有了公共的断言功能模块，这个功能在所有用例中都能用到，所以如果有其他在许多地方都能用到的功能我们都可以在`common`中添加，现在我们举一个栗子，添加一个获取文件路径的功能，这个功能非常实用，在之后的内容中会经常用到这个功能，我们先在`common`文件夹创建一个`get_cwd.py`文件，下面上代码：
+   ```python
+import os
+from pathlib import Path
+
+
+def get_absolute_path(dir_name):
+    # 获取当前文件的路径
+    now_path = Path('.').absolute()
+
+    # 从当前文件开始查找，如果不匹配就继续向上查找，找到后返回路径，20次后没有找到则停止查找 
+    search_time = 0
+    while now_path.name != dir_name:
+        now_path = now_path.parent
+        search_time += 1
+        if search_time == 20:
+            print('没有找到指定的文件夹')
+            break
+
+    return now_path
+```
  
  ### 配置文件
  
@@ -645,12 +669,14 @@ pip install pyyaml
  
  ```python
 import yaml
+from common.get_cwd import get_absolute_path  # 导入公共的获取路径功能
 def read_config(config_path):
     """
     公用的配置读取函数
     :param config_path: 获取config文件的路径
     """
-    with open(config_path, 'rb') as f:
+    config_dir = get_absolute_path(config_path)
+    with open(f'{config_dir}\\config\\config.yaml', 'rb') as f:
         yaml.warnings({'YAMLLoadWarning': False})  # 忽略警告，可以不写或者使用yaml.safe_load()
         config = yaml.load(f.read())  # 读取文件
         f.close()
@@ -661,7 +687,7 @@ def read_config(config_path):
  
  ```python
 from common.read_config import read_config
-config = read_config('D:\\project_name\\config\\config.yaml')  # 这里的路径写入你config.yaml文件的真实路径
+config = read_config('project_name')  # 这里的路径写入你config.yaml文件的真实路径
 url = config['project_name']['url']
 ```
  可以自行查看将url打印出来的结果，是不是和你config.yaml文件中的url一样呢~

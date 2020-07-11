@@ -82,7 +82,7 @@ import pymysql
 from common.read_config import read_config  # 导入项目公共模块的配置文件读取
 
 
-def get_data(conditions):
+def get_data_with_conditions(conditions):
     sql = "SELECT something FROM some_table WHERE title=%s"
     tup_data = execute_sql(sql, conditions)
     try:
@@ -95,14 +95,30 @@ def get_data(conditions):
     return data
 
 
-def execute_sql(sql, conditions, lib_name='数据库名称'):
+def get_data_without_conditions():
+    sql = "SELECT something FROM some_table"
+    tup_data = execute_sql(sql)
+    try:
+        data = tup_data[0][0]
+    except IndexError:
+        data = '没有查询到数据'
+    except BaseException as e:
+        data = f'{e},查询数据异常'
+
+    return data
+
+
+def execute_sql(sql, conditions=None, lib_name='数据库名称'):
     config = read_config('project_name')['mysql']
     db = pymysql.connect(
         config['host'], config['username'],
         config['password'], lib_name, config['port']
     )
     cursor = db.cursor()
-    cursor.execute(sql, (conditions,))
+    if conditions:
+        cursor.execute(sql, (conditions,))
+    else:
+        cursor.execute(sql)
     data = cursor.fetchall()
     db.close()
 
